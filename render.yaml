@@ -1,0 +1,28 @@
+# render.yaml — Render.com deployment blueprint
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: bcba-learning-system
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free                        # upgrade to starter for persistent disks
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: SESSION_SECRET
+        generateValue: true           # Render auto-generates a secure random value
+      - key: GEMINI_API_KEY
+        sync: false                   # Set manually in Render dashboard
+      - key: GROQ_API_KEY
+        sync: false                   # Set manually in Render dashboard
+      - key: DATABASE_URL
+        value: "sqlite:///data/bcba_assistant.db"
+
+    # Persistent disk keeps the SQLite DB across deploys
+    # Uncomment after upgrading from free plan:
+    # disk:
+    #   name: bcba-data
+    #   mountPath: /app/data
+    #   sizeGB: 1

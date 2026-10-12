@@ -1,0 +1,60 @@
+# ==============================================================================
+# BCBA Learning System - Git Ignore Rules
+# ==============================================================================
+
+# Python bytecode & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# Local SQLite databases & runtime storage
+*.db
+*.sqlite3
+bcba_assistant.db
+data/runtime_settings.json
+
+# Intermediate processed JSON artifacts (not needed for deployment)
+data/processed/*.json
+data/processed/*.py
+data/processed/*.md
+# EXCEPTION: seed file required for cloud deployment seeding
+!data/processed/seed_content_chunks.json
+
+# Heavy raw source PDF books
+*.pdf
+data/*.pdf
+data/source/
+data/source/*
+
+# Heavy image & OCR preprocessing directories (do not push to git)
+data/pages/
+data/preview/
+data/processed/pages/
+data/processed/pages_clean/
+data/processed/local_baseline/
+data/processed/model_compare/
+data/processed/strips/
+data/processed/*.log
+
+# Intermediate scraping / conversion scripts (heavy offline batch runners)
+scripts/
+
+# Operating System & IDE junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
