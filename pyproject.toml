@@ -2,7 +2,7 @@
 name = "bcba-learning-system"
 version = "1.0.0"
 description = "BCBA AI Learning Assistant — RAG tutor grounded in the PTB ABA Exam Study Manual"
-readme = "README.md"
+readme = {text = "BCBA AI Learning Assistant - Grounded RAG Study Companion", content-type = "text/plain"}
 requires-python = ">=3.13"
 dependencies = [
     # Web Framework
