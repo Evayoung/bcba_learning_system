@@ -11,6 +11,17 @@ from app.config import settings
 # SQLite connection configuration
 connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
 
+# Automatically ensure parent directory exists for SQLite files (especially on cloud mounts)
+if settings.database_url.startswith("sqlite:///"):
+    raw_path = settings.database_url.replace("sqlite:///", "")
+    from pathlib import Path
+    db_file_path = Path(raw_path)
+    if db_file_path.parent and not db_file_path.parent.exists():
+        try:
+            db_file_path.parent.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
+
 engine = create_engine(
     settings.database_url,
     connect_args=connect_args,
