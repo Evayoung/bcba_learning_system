@@ -63,29 +63,42 @@ Change both from **Settings → Account Credentials** once logged in.
 
 ## Deployment
 
-### Render.com (Recommended — one-click)
-1. Fork this repo
-2. Create a new **Web Service** on [render.com](https://render.com) → connect your fork
-3. Render auto-detects `render.yaml` and configures the service
-4. Set `GEMINI_API_KEY` and/or `GROQ_API_KEY` in the Render dashboard → **Environment**
-5. Deploy — the app seeds itself from `data/processed/seed_content_chunks.json` on first boot
+### FastAPI Cloud (Primary)
 
-> **SQLite persistence:** The free Render plan uses ephemeral storage (DB resets on redeploy). Upgrade to the **Starter** plan and uncomment the `disk:` block in [`render.yaml`](render.yaml) for a persistent SQLite disk.
+The project is configured for [FastAPI Cloud](https://fastapicloud.com) via [`pyproject.toml`](pyproject.toml).
 
-### Railway / Heroku
 ```bash
-# Set env vars in the platform dashboard, then:
-git push heroku main      # Heroku (uses Procfile)
-# or link repo in Railway dashboard (uses Dockerfile)
+# 1. Install the FastAPI Cloud CLI (already bundled in fastapi[standard])
+pip install "fastapi[standard]"
+
+# 2. Log in
+fastapi login
+
+# 3. Set env vars in the FastAPI Cloud dashboard:
+#    GEMINI_API_KEY, GROQ_API_KEY, SESSION_SECRET
+
+# 4. Deploy (run from the project root)
+fastapi deploy
 ```
 
-### Docker
+The `[tool.fastapi]` section in `pyproject.toml` points the CLI at `app.main:app`.  
+On first boot the app automatically seeds 512 content chunks from `data/processed/seed_content_chunks.json`.
+
+> **SQLite persistence:** set `DATABASE_URL` to a persistent volume path in the platform's environment settings to keep the DB across redeploys.
+
+### Docker (alternative)
 ```bash
 docker build -t bcba-learning .
 docker run -p 8000:8000 \
   -e GEMINI_API_KEY=your_key \
   -e SESSION_SECRET=your_secret \
   bcba-learning
+```
+
+### Heroku / Railway (alternative)
+```bash
+# Uses Procfile — set env vars in the platform dashboard, then:
+git push heroku main
 ```
 
 ---
@@ -107,9 +120,9 @@ data/
     seed_content_chunks.json  ← committed; 512 indexed PTB manual chunks
 .env.example            Template for secrets
 requirements.txt        Production Python dependencies
-Dockerfile              Container build
+pyproject.toml          FastAPI Cloud entrypoint config + project metadata
+Dockerfile              Container build (FastAPI Cloud + Docker platforms)
 Procfile                Heroku / Railway process definition
-render.yaml             Render.com deployment blueprint
 ```
 
 ---
