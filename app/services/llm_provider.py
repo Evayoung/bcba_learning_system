@@ -79,13 +79,13 @@ class LLMProviderAdapter:
         # Provider-specific key and model resolution
         if self.provider == "groq":
             self.api_key = api_key if api_key is not None else (runtime.get("groq_api_key") or settings.groq_api_key or "")
-            self.model = model or runtime.get("llm_model") or settings.llm_model or "llama-3.3-70b-versatile"
+            self.model = model or runtime.get("llm_model") or settings.llm_model or "qwen/qwen3.8-27b"
         elif self.provider == "gemini":
             self.api_key = api_key if api_key is not None else (runtime.get("gemini_api_key") or settings.gemini_api_key or "")
-            self.model = model or runtime.get("llm_model") or settings.llm_model or "gemini-2.5-flash"
+            self.model = model or runtime.get("llm_model") or settings.llm_model or "gemini-flash-latest"
         elif self.provider == "openrouter":
             self.api_key = api_key if api_key is not None else (runtime.get("openrouter_api_key") or os.environ.get("OPENROUTER_API_KEY_1") or "")
-            self.model = model or runtime.get("llm_model") or settings.llm_model or "meta-llama/llama-3.3-70b-instruct"
+            self.model = model or runtime.get("llm_model") or settings.llm_model or "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
         else:
             self.api_key = api_key or ""
             self.model = model or ""

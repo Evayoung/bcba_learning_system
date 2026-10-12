@@ -62,9 +62,11 @@ from app.db import SessionLocal as _SessionLocal
 from app.services.curriculum import seed_curriculum as _seed_curriculum
 from app.services.practice import seed_verified_questions as _seed_questions
 from app.services.auth import seed_default_user as _seed_user
+from app.services.content_ingestion import import_content_chunks as _import_chunks
 _startup_db = _SessionLocal()
 try:
     _seed_curriculum(_startup_db)
+    _import_chunks(_startup_db)
     _seed_questions(_startup_db)
     _seed_user(_startup_db)
 finally:

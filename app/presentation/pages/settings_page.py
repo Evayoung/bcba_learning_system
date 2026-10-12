@@ -90,11 +90,13 @@ def render_settings_page(
     ]
 
     model_options = [
-        ("gemini-2.5-flash", "gemini-2.5-flash (Fast & intelligent - default)", active_model == "gemini-2.5-flash"),
-        ("gemini-1.5-flash", "gemini-1.5-flash (Legacy fallback)", active_model == "gemini-1.5-flash"),
-        ("gemini-1.5-pro", "gemini-1.5-pro (High capability)", active_model == "gemini-1.5-pro"),
-        ("llama-3.3-70b-versatile", "llama-3.3-70b-versatile (Groq)", active_model == "llama-3.3-70b-versatile"),
-        ("meta-llama/llama-3.3-70b-instruct", "meta-llama/llama-3.3-70b-instruct (OpenRouter)", active_model == "meta-llama/llama-3.3-70b-instruct"),
+        ("gemini-flash-latest", "gemini-flash-latest (Google Gemini - Verified Active)", active_model == "gemini-flash-latest"),
+        ("gemini-2.5-flash-lite", "gemini-2.5-flash-lite (Google Gemini Lite)", active_model == "gemini-2.5-flash-lite"),
+        ("gemini-2.5-pro", "gemini-2.5-pro (Google Gemini Deep Reasoning)", active_model == "gemini-2.5-pro"),
+        ("qwen/qwen3.8-27b", "qwen/qwen3.8-27b (Groq - Fast & Capable 27B)", active_model == "qwen/qwen3.8-27b"),
+        ("openai/gpt-oss-120b", "openai/gpt-oss-120b (Groq - 120B Flagship)", active_model == "openai/gpt-oss-120b"),
+        ("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "nvidia/nemotron-3-nano-omni-30b-reasoning (OpenRouter Free Reasoning)", active_model == "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"),
+        ("nvidia/nemotron-3-super-120b-a12b:free", "nvidia/nemotron-3-super-120b (OpenRouter Free 120B)", active_model == "nvidia/nemotron-3-super-120b-a12b:free"),
     ]
 
     config_form = Card(
