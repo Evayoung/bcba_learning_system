@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     llm_timeout_seconds: int = 45
     groq_api_key: str = ""
     gemini_api_key: str = ""
+    openrouter_api_key: str = ""
 
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"),
