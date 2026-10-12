@@ -6,6 +6,7 @@ readme = {text = "BCBA AI Learning Assistant - Grounded RAG Study Companion", co
 requires-python = ">=3.13"
 dependencies = [
     # Web Framework
+    "fastapi[standard]>=0.115.0",
     "python-fasthtml>=0.14.13",
     "faststrap",
     "uvicorn>=0.38.0",
