@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
 # Install Python dependencies from pyproject.toml
 COPY pyproject.toml .
 COPY requirements.txt .
+COPY vendor/ ./vendor/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source

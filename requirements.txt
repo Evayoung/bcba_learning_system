@@ -4,7 +4,7 @@
 
 # ── Web Framework ──────────────────────────────────────────────────────────────
 python-fasthtml==0.14.13
-faststrap @ git+https://github.com/Faststrap-org/Faststrap.git@aa1ddabb48337710f569ae17b62c035892d53e5b
+./vendor/faststrap-0.9.1-py3-none-any.whl
 uvicorn==0.38.0
 starlette==1.6.0
 python-multipart==0.0.20
