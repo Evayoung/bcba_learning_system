@@ -1,0 +1,88 @@
+/* Cards & Surface Treatments */
+.card {
+  border: 1px solid var(--app-border) !important;
+  border-radius: var(--app-radius) !important;
+  box-shadow: var(--app-shadow-xs) !important;
+  background-color: var(--app-surface) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-1.5px);
+  box-shadow: var(--app-shadow-sm) !important;
+}
+
+/* Stat & Metric Cards */
+.app-metric-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--app-text);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.app-metric-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--app-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.faststrap-stat-card .card-body,
+[data-fs-stat-card] {
+  padding: 0.9rem 1.1rem !important;
+}
+
+/* Domain Pill */
+.domain-pill {
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--app-radius-sm);
+  font-weight: 700;
+  font-size: 0.85rem;
+  background-color: var(--app-primary-light);
+  color: var(--app-primary);
+}
+
+/* Footer */
+.app-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--app-border);
+  padding: 0.9rem 0;
+  background-color: #ffffff;
+  color: var(--app-text-muted);
+  font-size: 0.78rem;
+}
+
+/* Dense KPI cards should keep labels and values readable at every width. */
+.faststrap-stat-card .card-body > .d-flex {
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+.faststrap-stat-card .card-body > .d-flex > .flex-grow-1 {
+  min-width: 0;
+}
+
+.faststrap-stat-card h3 {
+  overflow-wrap: anywhere;
+}
+
+.faststrap-stat-card .card-body > .d-flex > :last-child {
+  flex: 0 0 auto;
+  padding: 0.65rem !important;
+}
+
+/* Muted Bootstrap text is too dark on the charcoal sidebar surface. */
+.app-exam-pill .text-muted {
+  color: rgba(226, 232, 240, 0.78) !important;
+}
+
+.app-exam-pill .text-info {
+  color: #7dd3fc !important;
+}

@@ -52,7 +52,7 @@ def render_practice_view(
                         span=12, md=8,
                     ),
                     Col(
-                        Button("Load Questions", variant="primary", type="submit", cls="w-100 mt-md-4 mb-2"),
+                        Button("Load Questions", variant="primary", type="submit", cls="w-100 mt-md-4 mb-2", data_loading_text="Loading questions..."),
                         span=12, md=4,
                     ),
                 ),
@@ -164,7 +164,7 @@ def render_practice_view(
     if not is_submitted:
         footer = Div(
             confidence_group,
-            Button("Submit Answer", variant="primary", type="submit", icon="check-lg"),
+            Button("Submit Answer", variant="primary", type="submit", icon="check-lg", data_loading_text="Saving your answer..."),
             cls="d-flex flex-wrap justify-content-between align-items-center pt-3 border-top gap-3",
         )
     else:
@@ -213,6 +213,7 @@ def render_practice_view(
             ),
             method="post",
             action="/practice/submit",
+            data_loading_text="Saving your answer...",
         )
     else:
         q_content = Div(

@@ -62,22 +62,22 @@ def kpi_cards() -> Row:
     """Top-level stat cards using FastStrap StatCard component."""
     return Row(
         Col(
-            StatCard("Scored Exam Items", "175", icon="file-earmark-check-fill", trend_type="neutral"),
+            StatCard("Scored Exam Items", "175", icon=Icon("file-earmark-check-fill"), trend_type="neutral"),
             span=12, sm=6, lg=3,
         ),
         Col(
-            StatCard("TCO Domains", "9", icon="grid-3x3-gap-fill", trend_type="neutral"),
+            StatCard("TCO Domains", "9", icon=Icon("grid-3x3-gap-fill"), trend_type="neutral"),
             span=12, sm=6, lg=3,
         ),
         Col(
-            StatCard("Manual Pages", "400", icon="journal-text", trend_type="neutral"),
+            StatCard("Manual Pages", "400", icon=Icon("journal-text"), trend_type="neutral"),
             span=12, sm=6, lg=3,
         ),
         Col(
-            StatCard("Content Chunks (RAG)", "512", icon="lightning-charge-fill", trend="Indexed", trend_type="up"),
+            StatCard("Content Chunks (RAG)", "512", icon=Icon("lightning-charge-fill"), trend="Indexed", trend_type="up"),
             span=12, sm=6, lg=3,
         ),
-        g=3, cls="mb-4",
+        cls="mb-4 g-3",
     )
 
 

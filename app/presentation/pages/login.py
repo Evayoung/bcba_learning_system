@@ -70,6 +70,7 @@ def render_login_page(
                 ),
                 method="post",
                 action="/login",
+                data_loading_text="Signing in...",
             ),
             # Default credential reminder pill
             Div(

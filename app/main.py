@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from urllib.parse import quote
-from fasthtml.common import Beforeware, FastHTML, Link, Redirect
+from fasthtml.common import Beforeware, FastHTML, Link, Redirect, Script
 from faststrap import add_bootstrap, mount_assets
 
 from app.config import settings
@@ -52,6 +52,7 @@ app.hdrs = app.hdrs + [
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap",
     ),
     Link(rel="stylesheet", href="/assets/css/custom.css"),
+    Script(src="/assets/js/app-feedback.js", defer=True),
 ]
 
 # Initialize database schema and seed data

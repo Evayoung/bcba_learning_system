@@ -1,0 +1,63 @@
+/* Practice Option Hover & States */
+.option-hover {
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.option-hover:hover {
+  border-color: #93c5fd !important;
+  background-color: #f8fafc !important;
+}
+
+/* Loading Bar */
+.app-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  background-color: var(--app-accent);
+  width: 0%;
+  z-index: 9999;
+  transition: width 0.15s ease;
+}
+
+.htmx-request .app-loading-bar,
+.htmx-request.app-loading-bar {
+  width: 75%;
+}
+
+/* Loading feedback for regular form submits and same-page navigations. */
+.app-action-spinner {
+  flex: 0 0 auto;
+  vertical-align: -0.125em;
+}
+
+button[aria-busy="true"] {
+  cursor: progress;
+  opacity: 0.86;
+}
+
+a.app-loading-link {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.6);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

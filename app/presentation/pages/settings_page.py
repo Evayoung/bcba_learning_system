@@ -28,6 +28,7 @@ def render_settings_page(
     gemini_key = current_settings.get("gemini_api_key", "")
     groq_key = current_settings.get("groq_api_key", "")
     openrouter_key = current_settings.get("openrouter_api_key", "")
+    model_summary = active_model if len(active_model) <= 22 else f"{active_model[:19]}..."
 
     # Notifications
     alerts = []
@@ -54,7 +55,7 @@ def render_settings_page(
             StatCard(
                 "Active Provider",
                 active_provider.capitalize(),
-                icon="cpu-fill",
+                icon=Icon("cpu-fill"),
                 trend="Ready" if (gemini_key if active_provider == "gemini" else groq_key) else "No Key",
                 trend_type="up" if (gemini_key if active_provider == "gemini" else groq_key) else "down",
             ),
@@ -63,8 +64,8 @@ def render_settings_page(
         Col(
             StatCard(
                 "Active Model",
-                active_model,
-                icon="robot",
+                model_summary,
+                icon=Icon("robot"),
                 trend_type="neutral",
             ),
             span=12, md=4,
@@ -72,14 +73,13 @@ def render_settings_page(
         Col(
             StatCard(
                 "Gemini Status",
-                mask_key(gemini_key),
-                icon="key-fill",
-                trend="Configured" if gemini_key else "Missing",
+                "Configured" if gemini_key else "Missing",
+                icon=Icon("key-fill"),
                 trend_type="up" if gemini_key else "down",
             ),
             span=12, md=4,
         ),
-        g=3, cls="mb-4",
+        cls="mb-4 g-3",
     )
 
     # Provider & Model Settings Form
@@ -173,11 +173,13 @@ def render_settings_page(
                         Button("Test Connection", variant="outline-primary", icon="broadcast-pin", size="md", cls="ms-2"),
                         href="/settings/test",
                         cls="text-decoration-none",
+                        data_loading_text="Testing provider connection...",
                     ),
                     cls="d-flex align-items-center flex-wrap pt-2",
                 ),
                 method="post",
                 action="/settings/save",
+                data_loading_text="Saving AI settings...",
             ),
             cls="p-4",
         ),
@@ -240,9 +242,10 @@ def render_settings_page(
                         span=12, md=6,
                     ),
                 ),
-                Button("Update Account Credentials", variant="primary", icon="shield-lock", size="md", type="submit"),
+                Button("Update Account Credentials", variant="primary", icon="shield-lock", size="md", type="submit", data_loading_text="Updating account..."),
                 method="post",
                 action="/settings/account",
+                data_loading_text="Updating account...",
             ),
             cls="p-4",
         ),

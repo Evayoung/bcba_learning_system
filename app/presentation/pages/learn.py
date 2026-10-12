@@ -195,15 +195,15 @@ def learn_page(
                 Row(
                     Col(
                         Select("domain", *domain_options, label="Select Domain", selected=selected_val, cls="mb-2"),
-                        col=12, md=5,
+                        span=12, md=5,
                     ),
                     Col(
                         Input("query", value=query or "", placeholder="Search keyword (e.g. reinforcement, extinction, IOA)...", label="Search Manual Concept", cls="mb-2"),
-                        col=12, md=5,
+                        span=12, md=5,
                     ),
                     Col(
                         Button("Search", variant="primary", type="submit", cls="w-100 mt-md-4 mb-2"),
-                        col=12, md=2,
+                        span=12, md=2,
                     ),
                 ),
                 method="get",
@@ -243,6 +243,7 @@ def learn_page(
                                 value=mode_val,
                                 type="submit",
                                 cls="me-1 mb-1",
+                                data_loading_text="Applying tutor mode...",
                             )
                             for mode_val, label in modes
                         ],
@@ -257,15 +258,16 @@ def learn_page(
                             value="",
                             cls="mb-2",
                         ),
-                        col=12, md=10,
+                        span=12, md=10,
                     ),
                     Col(
-                        Button("Ask Tutor", variant="success", type="submit", cls="w-100 mb-2"),
-                        col=12, md=2,
+                        Button("Ask Tutor", variant="success", type="submit", cls="w-100 mb-2", data_loading_text="Searching the manual and asking AI..."),
+                        span=12, md=2,
                     ),
                 ),
                 method="post",
                 action="/learn/ask",
+                data_loading_text="Searching the manual and asking AI...",
             ),
             cls="p-3",
         ),

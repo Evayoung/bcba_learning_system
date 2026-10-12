@@ -47,19 +47,19 @@ def progress_page(stats: Optional[Dict[str, Any]] = None) -> list:
                     Span("Questions Answered", cls="app-metric-label"),
                     Div(str(total_attempts), cls="app-metric-value mt-1"),
                     P("Practice attempts logged across all sessions", cls="text-muted small mb-0"),
-                    col=12, md=4, cls="mb-3 mb-md-0",
+                    span=12, md=4, cls="mb-3 mb-md-0",
                 ),
                 Col(
                     Span("Overall Accuracy", cls="app-metric-label"),
                     Div(accuracy_display, cls=f"app-metric-value mt-1 {'text-success' if overall_accuracy >= 70 else 'text-warning' if overall_accuracy >= 50 else 'text-danger' if total_attempts >= 5 else 'text-muted'}"),
                     P(accuracy_note, cls="text-muted small mb-0"),
-                    col=12, md=4, cls="mb-3 mb-md-0",
+                    span=12, md=4, cls="mb-3 mb-md-0",
                 ),
                 Col(
                     Span("Items Due for Review", cls="app-metric-label"),
                     Div(str(due_review) if due_review > 0 else "0", cls="app-metric-value mt-1 text-primary"),
                     P("Based on spaced repetition and incorrect answers", cls="text-muted small mb-0"),
-                    col=12, md=4,
+                    span=12, md=4,
                 ),
             ),
             cls="p-3",
@@ -120,7 +120,7 @@ def progress_page(stats: Optional[Dict[str, Any]] = None) -> list:
                         href="/practice",
                         cls="text-decoration-none",
                     ),
-                    col=12, md=4, cls="mb-2 mb-md-0",
+                    span=12, md=4, cls="mb-2 mb-md-0",
                 ),
                 Col(
                     A(
@@ -128,7 +128,7 @@ def progress_page(stats: Optional[Dict[str, Any]] = None) -> list:
                         href="/learn",
                         cls="text-decoration-none",
                     ),
-                    col=12, md=4, cls="mb-2 mb-md-0",
+                    span=12, md=4, cls="mb-2 mb-md-0",
                 ),
                 Col(
                     A(
@@ -136,7 +136,7 @@ def progress_page(stats: Optional[Dict[str, Any]] = None) -> list:
                         href="/mock",
                         cls="text-decoration-none",
                     ),
-                    col=12, md=4,
+                    span=12, md=4,
                 ),
             ),
             cls="p-3",

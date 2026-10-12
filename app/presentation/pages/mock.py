@@ -72,6 +72,7 @@ def mock_setup_page(total_verified: int = 0) -> list:
                         icon="play-circle-fill",
                         size="lg",
                         type="submit",
+                        data_loading_text="Preparing exam...",
                     ),
                     Span(
                         f"{total_verified} verified questions available",
@@ -89,10 +90,10 @@ def mock_setup_page(total_verified: int = 0) -> list:
 
     # Stats row
     stats_row = Row(
-        Col(StatCard("Verified Questions", str(total_verified), icon="patch-check-fill", trend_type="up"), span=12, md=4),
-        Col(StatCard("Domains Covered", "9", icon="grid-3x3-gap-fill", trend_type="neutral"), span=12, md=4),
-        Col(StatCard("Exam Weighting", "175 Scored Items", icon="bar-chart-fill", trend_type="neutral"), span=12, md=4),
-        g=3, cls="mb-4",
+        Col(StatCard("Verified Questions", str(total_verified), icon=Icon("patch-check-fill"), trend_type="up"), span=12, md=4),
+        Col(StatCard("Domains Covered", "9", icon=Icon("grid-3x3-gap-fill"), trend_type="neutral"), span=12, md=4),
+        Col(StatCard("Exam Weighting", "175 Scored Items", icon=Icon("bar-chart-fill"), trend_type="neutral"), span=12, md=4),
+        cls="mb-4 g-3",
     )
 
     return [disclaimer, config_card, stats_row]
@@ -191,6 +192,7 @@ def mock_question_page(
                 type="submit",
                 name="action",
                 value="finish" if is_last else "next",
+                data_loading_text="Saving your answer...",
             ),
             cls="d-flex gap-2",
         ),
@@ -208,6 +210,7 @@ def mock_question_page(
             ),
             method="post",
             action="/mock/answer",
+            data_loading_text="Saving your answer...",
         ),
         cls="mb-4 shadow",
     )
@@ -254,21 +257,21 @@ def mock_results_page(results: Dict[str, Any], exam_label: str = "Practice Exam"
             StatCard(
                 "Score",
                 f"{score_pct}%",
-                icon="percent",
+                icon=Icon("percent"),
                 trend=f"{'Pass' if passed else 'Below Pass'}",
                 trend_type="up" if passed else "down",
             ),
             span=12, md=4,
         ),
         Col(
-            StatCard("Correct", f"{correct}/{total}", icon="check2-circle", trend_type="neutral"),
+            StatCard("Correct", f"{correct}/{total}", icon=Icon("check2-circle"), trend_type="neutral"),
             span=12, md=4,
         ),
         Col(
-            StatCard("Time Taken", duration_str or "—", icon="stopwatch", trend_type="neutral"),
+            StatCard("Time Taken", duration_str or "—", icon=Icon("stopwatch"), trend_type="neutral"),
             span=12, md=4,
         ),
-        g=3, cls="mb-4",
+        cls="mb-4 g-3",
     )
 
     # Domain breakdown
