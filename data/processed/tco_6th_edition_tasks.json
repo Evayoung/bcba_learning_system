@@ -1,0 +1,522 @@
+[
+  {
+    "code": "A.1",
+    "domain_code": "A",
+    "description": "Identify the goals of behavior analysis as a science (i.e., description, prediction, control)."
+  },
+  {
+    "code": "A.2",
+    "domain_code": "A",
+    "description": "Explain the philosophical assumptions underlying the science of behavior analysis (e.g., selectionism, determinism, empiricism, parsimony, pragmatism)."
+  },
+  {
+    "code": "A.3",
+    "domain_code": "A",
+    "description": "Explain behavior from the perspective of radical behaviorism."
+  },
+  {
+    "code": "A.4",
+    "domain_code": "A",
+    "description": "Distinguish among behaviorism, the experimental analysis of behavior, applied behavior analysis, and professional practice guided by the science of behavior analysis."
+  },
+  {
+    "code": "A.5",
+    "domain_code": "A",
+    "description": "Identify and describe dimensions of applied behavior analysis."
+  },
+  {
+    "code": "B.1",
+    "domain_code": "B",
+    "description": "Identify and distinguish among behavior, response, and response class."
+  },
+  {
+    "code": "B.2",
+    "domain_code": "B",
+    "description": "Identify and distinguish between stimulus and stimulus class."
+  },
+  {
+    "code": "B.3",
+    "domain_code": "B",
+    "description": "Identify and distinguish between respondent and operant conditioning."
+  },
+  {
+    "code": "B.4",
+    "domain_code": "B",
+    "description": "Identify and distinguish between positive and negative reinforcement contingencies."
+  },
+  {
+    "code": "B.5",
+    "domain_code": "B",
+    "description": "Identify and distinguish between positive and negative punishment contingencies."
+  },
+  {
+    "code": "B.6",
+    "domain_code": "B",
+    "description": "Identify and distinguish between automatic and socially mediated contingencies."
+  },
+  {
+    "code": "B.7",
+    "domain_code": "B",
+    "description": "Identify and distinguish among unconditioned, conditioned, and generalized reinforcers."
+  },
+  {
+    "code": "B.8",
+    "domain_code": "B",
+    "description": "Identify and distinguish among unconditioned, conditioned, and generalized punishers."
+  },
+  {
+    "code": "B.9",
+    "domain_code": "B",
+    "description": "Identify and distinguish among simple schedules of reinforcement."
+  },
+  {
+    "code": "B.10",
+    "domain_code": "B",
+    "description": "Identify and distinguish among concurrent, multiple, mixed, and chained schedules of reinforcement."
+  },
+  {
+    "code": "B.11",
+    "domain_code": "B",
+    "description": "Identify and distinguish between operant and respondent extinction as operations and processes."
+  },
+  {
+    "code": "B.12",
+    "domain_code": "B",
+    "description": "Identify examples of stimulus control."
+  },
+  {
+    "code": "B.13",
+    "domain_code": "B",
+    "description": "Identify examples of stimulus discrimination."
+  },
+  {
+    "code": "B.14",
+    "domain_code": "B",
+    "description": "Identify and distinguish between stimulus and response generalization."
+  },
+  {
+    "code": "B.15",
+    "domain_code": "B",
+    "description": "Identify examples of response maintenance."
+  },
+  {
+    "code": "B.16",
+    "domain_code": "B",
+    "description": "Identify examples of motivating operations."
+  },
+  {
+    "code": "B.17",
+    "domain_code": "B",
+    "description": "Distinguish between motivating operations and stimulus control."
+  },
+  {
+    "code": "B.18",
+    "domain_code": "B",
+    "description": "Identify and distinguish between rule-governed and contingency-shaped behavior."
+  },
+  {
+    "code": "B.19",
+    "domain_code": "B",
+    "description": "Identify and distinguish among verbal operants."
+  },
+  {
+    "code": "B.20",
+    "domain_code": "B",
+    "description": "Identify the role of multiple control in verbal behavior."
+  },
+  {
+    "code": "B.21",
+    "domain_code": "B",
+    "description": "Identify examples of processes that promote emergent relations and generative performance."
+  },
+  {
+    "code": "B.22",
+    "domain_code": "B",
+    "description": "Identify ways behavioral momentum can be used to understand response persistence."
+  },
+  {
+    "code": "B.23",
+    "domain_code": "B",
+    "description": "Identify ways the matching law can be used to interpret response allocation."
+  },
+  {
+    "code": "B.24",
+    "domain_code": "B",
+    "description": "Identify and distinguish between imitation and observational learning."
+  },
+  {
+    "code": "C.1",
+    "domain_code": "C",
+    "description": "Create operational definitions of behavior."
+  },
+  {
+    "code": "C.2",
+    "domain_code": "C",
+    "description": "Distinguish among direct, indirect, and product measures of behavior."
+  },
+  {
+    "code": "C.3",
+    "domain_code": "C",
+    "description": "Measure occurrence."
+  },
+  {
+    "code": "C.4",
+    "domain_code": "C",
+    "description": "Measure temporal dimensions of behavior (e.g., duration, latency, interresponse time)."
+  },
+  {
+    "code": "C.5",
+    "domain_code": "C",
+    "description": "Distinguish between continuous and discontinuous measurement procedures."
+  },
+  {
+    "code": "C.6",
+    "domain_code": "C",
+    "description": "Design and apply discontinuous measurement procedures (e.g., interval recording, time sampling)."
+  },
+  {
+    "code": "C.7",
+    "domain_code": "C",
+    "description": "Measure efficiency (e.g., trials to criterion, cost-benefit analysis, training duration)."
+  },
+  {
+    "code": "C.8",
+    "domain_code": "C",
+    "description": "Evaluate the validity and reliability of measurement procedures."
+  },
+  {
+    "code": "C.9",
+    "domain_code": "C",
+    "description": "Select a measurement procedure to obtain representative data that accounts for the critical dimension of the behavior and environmental constraints."
+  },
+  {
+    "code": "C.10",
+    "domain_code": "C",
+    "description": "Graph data to communicate relevant quantitative relations (e.g., equal-interval graphs, bar graphs, cumulative records)."
+  },
+  {
+    "code": "C.11",
+    "domain_code": "C",
+    "description": "Interpret graphed data."
+  },
+  {
+    "code": "C.12",
+    "domain_code": "C",
+    "description": "Select a measurement procedure to obtain representative procedural integrity data that accounts for relevant dimensions (e.g., accuracy, dosage) and environmental constraints."
+  },
+  {
+    "code": "D.1",
+    "domain_code": "D",
+    "description": "Distinguish between dependent and independent variables."
+  },
+  {
+    "code": "D.2",
+    "domain_code": "D",
+    "description": "Distinguish between internal and external validity."
+  },
+  {
+    "code": "D.3",
+    "domain_code": "D",
+    "description": "Identify threats to internal validity (e.g., history, maturation)."
+  },
+  {
+    "code": "D.4",
+    "domain_code": "D",
+    "description": "Identify the defining features of single-case experimental designs (e.g., individuals serve as their own controls, repeated measures, prediction, verification, replication)."
+  },
+  {
+    "code": "D.5",
+    "domain_code": "D",
+    "description": "Identify the relative strengths of single-case experimental designs and group designs."
+  },
+  {
+    "code": "D.6",
+    "domain_code": "D",
+    "description": "Critique and interpret data from single-case experimental designs."
+  },
+  {
+    "code": "D.7",
+    "domain_code": "D",
+    "description": "Distinguish among reversal, multiple-baseline, multielement, and changing criterion designs."
+  },
+  {
+    "code": "D.8",
+    "domain_code": "D",
+    "description": "Identify rationales for conducting comparative, component, and parametric analyses."
+  },
+  {
+    "code": "D.9",
+    "domain_code": "D",
+    "description": "Apply single-case experimental designs."
+  },
+  {
+    "code": "E.1",
+    "domain_code": "E",
+    "description": "Identify and apply core principles underlying the ethics codes for BACB\u00ae certificants (e.g., benefit others; treat others with compassion, dignity, and respect; behave with integrity)."
+  },
+  {
+    "code": "E.2",
+    "domain_code": "E",
+    "description": "Identify the risks to oneself, others, and the profession as a result of engaging in unethical behavior."
+  },
+  {
+    "code": "E.3",
+    "domain_code": "E",
+    "description": "Develop and maintain competence by engaging in professional development activities (e.g., read literature, seek consultation, establish mentors)."
+  },
+  {
+    "code": "E.4",
+    "domain_code": "E",
+    "description": "Identify and comply with requirements for collecting, using, protecting, and disclosing confidential information."
+  },
+  {
+    "code": "E.5",
+    "domain_code": "E",
+    "description": "Identify and comply with requirements for making public statements about professional activities (e.g., social media activity; misrepresentation of professional credentials, behavior analysis, and service outcomes)."
+  },
+  {
+    "code": "E.6",
+    "domain_code": "E",
+    "description": "Identify the conditions under which services or supervision should be discontinued and apply steps that should be taken when transitioning clients and supervisees to another professional."
+  },
+  {
+    "code": "E.7",
+    "domain_code": "E",
+    "description": "Identify types of and risks associated with multiple relationships, and how to mitigate those risks when they are unavoidable."
+  },
+  {
+    "code": "E.8",
+    "domain_code": "E",
+    "description": "Identify and apply interpersonal and other skills (e.g., accepting feedback, listening actively, seeking input, collaborating) to establish and maintain professional relationships."
+  },
+  {
+    "code": "E.9",
+    "domain_code": "E",
+    "description": "Engage in cultural humility in service delivery and professional relationships."
+  },
+  {
+    "code": "E.10",
+    "domain_code": "E",
+    "description": "Apply culturally responsive and inclusive service and supervision activities."
+  },
+  {
+    "code": "E.11",
+    "domain_code": "E",
+    "description": "Identify personal biases and how they might interfere with professional activity."
+  },
+  {
+    "code": "E.12",
+    "domain_code": "E",
+    "description": "Identify and apply the legal, regulatory, and practice requirements (e.g., licensure, jurisprudence, funding, certification) relevant to the delivery of behavior-analytic services."
+  },
+  {
+    "code": "F.1",
+    "domain_code": "F",
+    "description": "Identify relevant sources of information in records (e.g., educational, medical, historical) at the outset of the case."
+  },
+  {
+    "code": "F.2",
+    "domain_code": "F",
+    "description": "Identify and integrate relevant cultural variables in the assessment process."
+  },
+  {
+    "code": "F.3",
+    "domain_code": "F",
+    "description": "Design and evaluate assessments of relevant skill strengths and areas of need."
+  },
+  {
+    "code": "F.4",
+    "domain_code": "F",
+    "description": "Design and evaluate preference assessments."
+  },
+  {
+    "code": "F.5",
+    "domain_code": "F",
+    "description": "Design and evaluate descriptive assessments."
+  },
+  {
+    "code": "F.6",
+    "domain_code": "F",
+    "description": "Design and evaluate functional analyses."
+  },
+  {
+    "code": "F.7",
+    "domain_code": "F",
+    "description": "Interpret assessment data to determine the need for behavior-analytic services and/or referral to others."
+  },
+  {
+    "code": "F.8",
+    "domain_code": "F",
+    "description": "Interpret assessment data to identify and prioritize socially significant, client-informed, and culturally responsive behavior-change procedures and goals."
+  },
+  {
+    "code": "G.1",
+    "domain_code": "G",
+    "description": "Design and evaluate positive and negative reinforcement procedures."
+  },
+  {
+    "code": "G.2",
+    "domain_code": "G",
+    "description": "Design and evaluate differential reinforcement (e.g., DRA, DRO, DRL, DRH) procedures with and without extinction."
+  },
+  {
+    "code": "G.3",
+    "domain_code": "G",
+    "description": "Design and evaluate time-based reinforcement (e.g., fixed-time) schedules."
+  },
+  {
+    "code": "G.4",
+    "domain_code": "G",
+    "description": "Identify procedures to establish and use conditioned reinforcers (e.g., token economies)."
+  },
+  {
+    "code": "G.5",
+    "domain_code": "G",
+    "description": "Incorporate motivating operations and discriminative stimuli into behavior-change procedures."
+  },
+  {
+    "code": "G.6",
+    "domain_code": "G",
+    "description": "Design and evaluate procedures to produce simple and conditional discriminations."
+  },
+  {
+    "code": "G.7",
+    "domain_code": "G",
+    "description": "Select and evaluate stimulus and response prompting procedures (e.g., errorless, most-to-least, least-to-most)."
+  },
+  {
+    "code": "G.8",
+    "domain_code": "G",
+    "description": "Design and implement procedures to fade stimulus and response prompts (e.g., prompt delay, stimulus fading)."
+  },
+  {
+    "code": "G.9",
+    "domain_code": "G",
+    "description": "Design and evaluate modeling procedures."
+  },
+  {
+    "code": "G.10",
+    "domain_code": "G",
+    "description": "Design and evaluate instructions and rules."
+  },
+  {
+    "code": "G.11",
+    "domain_code": "G",
+    "description": "Shape dimensions of behavior."
+  },
+  {
+    "code": "G.12",
+    "domain_code": "G",
+    "description": "Select and implement chaining procedures."
+  },
+  {
+    "code": "G.13",
+    "domain_code": "G",
+    "description": "Design and evaluate trial-based and free-operant procedures."
+  },
+  {
+    "code": "G.14",
+    "domain_code": "G",
+    "description": "Design and evaluate group contingencies."
+  },
+  {
+    "code": "G.15",
+    "domain_code": "G",
+    "description": "Design and evaluate procedures to promote stimulus and response generalization."
+  },
+  {
+    "code": "G.16",
+    "domain_code": "G",
+    "description": "Design and evaluate procedures to maintain desired behavior change following intervention (e.g., schedule thinning, transferring to naturally occurring reinforcers)."
+  },
+  {
+    "code": "G.17",
+    "domain_code": "G",
+    "description": "Design and evaluate positive and negative punishment (e.g., time-out, response cost, overcorrection)."
+  },
+  {
+    "code": "G.18",
+    "domain_code": "G",
+    "description": "Evaluate emotional and elicited effects of behavior-change procedures."
+  },
+  {
+    "code": "G.19",
+    "domain_code": "G",
+    "description": "Design and evaluate procedures to promote emergent relations and generative performance."
+  },
+  {
+    "code": "H.1",
+    "domain_code": "H",
+    "description": "State intervention goals in observable and measurable terms."
+  },
+  {
+    "code": "H.2",
+    "domain_code": "H",
+    "description": "Identify and recommend interventions based on assessment results, scientific evidence, client preferences, and contextual fit (e.g., expertise required for implementation, cultural variables, environmental resources)."
+  },
+  {
+    "code": "H.3",
+    "domain_code": "H",
+    "description": "Select socially valid alternative behavior to be established or increased when a target behavior is to be decreased."
+  },
+  {
+    "code": "H.4",
+    "domain_code": "H",
+    "description": "Plan for and attempt to mitigate possible unwanted effects when using reinforcement, extinction, and punishment procedures."
+  },
+  {
+    "code": "H.5",
+    "domain_code": "H",
+    "description": "Plan for and attempt to mitigate possible relapse of the target behavior."
+  },
+  {
+    "code": "H.6",
+    "domain_code": "H",
+    "description": "Make data-based decisions about procedural integrity."
+  },
+  {
+    "code": "H.7",
+    "domain_code": "H",
+    "description": "Make data-based decisions about the effectiveness of the intervention and the need for modification."
+  },
+  {
+    "code": "H.8",
+    "domain_code": "H",
+    "description": "Collaborate with others to support and enhance client services."
+  },
+  {
+    "code": "I.1",
+    "domain_code": "I",
+    "description": "State the benefits of evidence-based behavior-analytic supervision."
+  },
+  {
+    "code": "I.2",
+    "domain_code": "I",
+    "description": "Identify and apply strategies for establishing effective supervisory relationships (e.g., executing supervisor-supervisee contracts, establishing clear expectations, giving and accepting feedback)."
+  },
+  {
+    "code": "I.3",
+    "domain_code": "I",
+    "description": "Identify and implement methods that promote equity in supervision practices."
+  },
+  {
+    "code": "I.4",
+    "domain_code": "I",
+    "description": "Select supervision goals based on an assessment of the supervisee's skills, cultural variables, and the environment."
+  },
+  {
+    "code": "I.5",
+    "domain_code": "I",
+    "description": "Identify and apply empirically validated and culturally responsive performance management procedures (e.g., modeling, practice, feedback, reinforcement, task clarification, manipulation of response effort)."
+  },
+  {
+    "code": "I.6",
+    "domain_code": "I",
+    "description": "Apply a function-based approach (e.g., performance diagnostics) to assess and improve supervisee behavior."
+  },
+  {
+    "code": "I.7",
+    "domain_code": "I",
+    "description": "Make data-based decisions about the efficacy of supervisory practices."
+  }
+]

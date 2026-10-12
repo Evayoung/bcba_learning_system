@@ -31,6 +31,8 @@ data/processed/*.py
 data/processed/*.md
 # EXCEPTION: seed file required for cloud deployment seeding
 !data/processed/seed_content_chunks.json
+!data/processed/tco_6th_edition_tasks.json
+!data/processed/verified_manual_questions.py
 
 # Heavy raw source PDF books
 *.pdf
