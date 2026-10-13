@@ -23,7 +23,11 @@ def _require_login(req, session):
 
 
 # Create FastHTML instance with route guard
-app = FastHTML(secret_key=settings.secret_key)
+app = FastHTML(
+    secret_key=settings.secret_key,
+    sess_https_only=settings.app_base_url.strip().lower().startswith("https://"),
+    same_site="lax",
+)
 app.before.append(
     Beforeware(
         _require_login,
@@ -62,14 +66,23 @@ init_db()
 from app.db import SessionLocal as _SessionLocal
 from app.services.curriculum import seed_curriculum as _seed_curriculum
 from app.services.practice import seed_verified_questions as _seed_questions
-from app.services.auth import seed_default_user as _seed_user
+from app.services.auth import remove_legacy_demo_account as _remove_legacy_demo_account
+from app.services.auth import seed_initial_user as _seed_initial_user
 from app.services.content_ingestion import import_content_chunks as _import_chunks
+from app.services.settings_service import purge_legacy_provider_keys as _purge_legacy_provider_keys
 _startup_db = _SessionLocal()
 try:
     _seed_curriculum(_startup_db)
     _import_chunks(_startup_db)
     _seed_questions(_startup_db)
-    _seed_user(_startup_db)
+    _remove_legacy_demo_account(_startup_db)
+    _seed_initial_user(
+        _startup_db,
+        email=settings.candidate_email,
+        password=settings.candidate_password,
+        name=settings.candidate_name,
+    )
+    _purge_legacy_provider_keys()
 finally:
     _startup_db.close()
 

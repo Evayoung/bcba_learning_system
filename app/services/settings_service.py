@@ -1,78 +1,79 @@
-"""Runtime settings service for persistent API keys and provider configuration.
-
-Allows the candidate to easily update, test, and switch API keys directly from
-the application UI, storing them persistently in local JSON storage with fallback
-to environment variables.
-"""
+"""Operator-managed LLM configuration and legacy-key cleanup."""
 
 from __future__ import annotations
 
 import json
+import os
+import tempfile
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict
 
 from app.config import settings
 
 SETTINGS_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "runtime_settings.json"
+_LEGACY_KEY_FIELDS = {"gemini_api_key", "groq_api_key", "openrouter_api_key"}
 
 
-def _load_settings_file() -> Dict[str, Any]:
+def purge_legacy_provider_keys() -> None:
+    """Remove provider credentials previously stored in plaintext JSON."""
     if not SETTINGS_FILE.exists():
-        return {}
+        return
     try:
-        with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+        with SETTINGS_FILE.open("r", encoding="utf-8") as settings_file:
+            data = json.load(settings_file)
+    except (OSError, json.JSONDecodeError):
+        # This file contains only runtime provider preferences; discard an
+        # unreadable version rather than risk leaving an unhandled secret file.
+        SETTINGS_FILE.unlink(missing_ok=True)
+        return
 
+    if not isinstance(data, dict) or not (_LEGACY_KEY_FIELDS & data.keys()):
+        return
+    for key_name in _LEGACY_KEY_FIELDS:
+        data.pop(key_name, None)
 
-def _save_settings_file(data: Dict[str, Any]) -> None:
     SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+    temp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w", encoding="utf-8", dir=SETTINGS_FILE.parent,
+            prefix="runtime_settings_", suffix=".tmp", delete=False,
+        ) as temp_file:
+            temp_path = Path(temp_file.name)
+            json.dump(data, temp_file, indent=2)
+        try:
+            os.chmod(temp_path, 0o600)
+        except OSError:
+            pass
+        os.replace(temp_path, SETTINGS_FILE)
+    finally:
+        if temp_path is not None:
+            temp_path.unlink(missing_ok=True)
 
 
 def get_runtime_settings() -> Dict[str, Any]:
-    """Retrieve effective settings, overlaying saved user settings on top of defaults."""
-    user_data = _load_settings_file()
+    """Return provider settings from environment configuration only."""
+    provider = settings.llm_provider.strip().lower()
+    keys = {
+        "gemini": settings.gemini_api_key,
+        "groq": settings.groq_api_key,
+        "openrouter": settings.openrouter_api_key,
+    }
     return {
-        "llm_provider": user_data.get("llm_provider") or settings.llm_provider or "gemini",
-        "llm_model": user_data.get("llm_model") or settings.llm_model or "gemini-2.5-flash",
-        "gemini_api_key": user_data.get("gemini_api_key") or settings.gemini_api_key or "",
-        "groq_api_key": user_data.get("groq_api_key") or settings.groq_api_key or "",
-        "openrouter_api_key": user_data.get("openrouter_api_key") or "",
+        "llm_provider": provider,
+        "llm_model": settings.llm_model,
+        "gemini_api_key": settings.gemini_api_key,
+        "groq_api_key": settings.groq_api_key,
+        "openrouter_api_key": settings.openrouter_api_key,
+        "provider_configured": bool(keys.get(provider)),
     }
 
 
-def update_runtime_settings(
-    llm_provider: Optional[str] = None,
-    llm_model: Optional[str] = None,
-    gemini_api_key: Optional[str] = None,
-    groq_api_key: Optional[str] = None,
-    openrouter_api_key: Optional[str] = None,
-) -> Dict[str, Any]:
-    """Update runtime settings persistently."""
-    data = _load_settings_file()
-
-    if llm_provider is not None:
-        data["llm_provider"] = llm_provider.strip().lower()
-    if llm_model is not None:
-        data["llm_model"] = llm_model.strip()
-    if gemini_api_key is not None:
-        data["gemini_api_key"] = gemini_api_key.strip()
-    if groq_api_key is not None:
-        data["groq_api_key"] = groq_api_key.strip()
-    if openrouter_api_key is not None:
-        data["openrouter_api_key"] = openrouter_api_key.strip()
-
-    _save_settings_file(data)
-    return get_runtime_settings()
-
-
-def mask_key(key: str) -> str:
-    """Safely mask an API key for display (e.g. AIzaSy...8eS_Pto)."""
-    if not key:
-        return "Not configured"
-    if len(key) <= 8:
-        return "••••••••"
-    return f"{key[:6]}...{key[-4:]}"
+def get_public_runtime_settings() -> Dict[str, Any]:
+    """Return configuration safe to show on the learner-facing settings page."""
+    runtime = get_runtime_settings()
+    return {
+        "llm_provider": runtime["llm_provider"],
+        "llm_model": runtime["llm_model"],
+        "provider_configured": runtime["provider_configured"],
+    }

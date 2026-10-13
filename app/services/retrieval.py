@@ -107,7 +107,7 @@ def retrieve_content(
         if task:
             chunks = (
                 db.query(ContentChunk)
-                .filter(ContentChunk.task_id == task.id)
+                .filter(ContentChunk.task_id == task.id, ContentChunk.verification_status == "verified")
                 .order_by(ContentChunk.printed_page_number.asc())
                 .limit(limit)
                 .all()
@@ -157,6 +157,7 @@ def retrieve_content(
             LEFT JOIN domains d ON c.domain_id = d.id
             LEFT JOIN tasks t ON c.task_id = t.id
             WHERE content_chunks_fts MATCH :match_query
+              AND c.verification_status = 'verified'
             """
             params: Dict[str, Any] = {"match_query": fts_match, "limit": limit}
 
@@ -196,7 +197,7 @@ def retrieve_content(
 
     # 3. Fallback to SQL LIKE if FTS returned nothing
     if not results and (query or domain_code or task_code):
-        q = db.query(ContentChunk)
+        q = db.query(ContentChunk).filter(ContentChunk.verification_status == "verified")
         if domain_code and domain_code != "all":
             domain = db.query(Domain).filter(Domain.code == domain_code).first()
             if domain:

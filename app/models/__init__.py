@@ -91,6 +91,9 @@ class ContentChunk(Base):
 
     extraction_status = Column(String(50), default="extracted")  # extracted, normalized, flagged
     verification_status = Column(String(50), default="unverified", index=True)  # unverified, verified, rejected
+    qa_status = Column(String(50), nullable=True)  # human_reviewed, owner_confirmed
+    qa_reviewer = Column(String(255), nullable=True)
+    qa_notes = Column(Text, nullable=True)
 
     created_at = Column(DateTime, default=_utc_now)
 
@@ -123,7 +126,7 @@ class Question(Base):
 
     difficulty = Column(String(20), default="medium")  # easy, medium, hard
     source = Column(String(255), default="PTB Study Manual Review Questions")
-    origin_type = Column(String(50), default="extracted")  # extracted, generated, custom
+    origin_type = Column(String(50), default="unclassified")  # manual, adapted, generated, unclassified
     verification_status = Column(String(50), default="unverified", index=True)  # unverified, verified
 
     created_at = Column(DateTime, default=_utc_now)

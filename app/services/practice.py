@@ -10,7 +10,7 @@ from sqlalchemy import func
 
 from app.models import Domain, Task, Question, Attempt, StudySession, ReviewItem
 from app.schemas.question import QuestionSchema, AttemptSubmissionSchema
-from data.processed.verified_manual_questions import VERIFIED_MANUAL_QUESTIONS
+from data.processed.adapted_practice_questions import ADAPTED_PRACTICE_QUESTIONS
 
 
 def _utc_now() -> datetime:
@@ -21,6 +21,7 @@ def seed_verified_questions(db: Session, force: bool = False) -> Dict[str, int]:
     """Seed verified practice questions into the questions table."""
     existing_count = db.query(Question).count()
     if existing_count > 0 and not force:
+        _sync_question_provenance(db)
         return {"questions_seeded": 0, "total_questions": existing_count}
 
     if force:
@@ -30,7 +31,7 @@ def seed_verified_questions(db: Session, force: bool = False) -> Dict[str, int]:
     tasks_by_code = {t.code: t for t in db.query(Task).all()}
     seeded_count = 0
 
-    for q_data in VERIFIED_MANUAL_QUESTIONS:
+    for q_data in ADAPTED_PRACTICE_QUESTIONS:
         # Validate schema
         validated = QuestionSchema(**q_data)
         task_obj = tasks_by_code.get(validated.task_code) if validated.task_code else None
@@ -52,6 +53,21 @@ def seed_verified_questions(db: Session, force: bool = False) -> Dict[str, int]:
 
     db.commit()
     return {"questions_seeded": seeded_count, "total_questions": db.query(Question).count()}
+
+
+def _sync_question_provenance(db: Session) -> None:
+    """Correct legacy labels for the existing adapted scenario questions."""
+    current_by_stem = {item["stem"]: item for item in ADAPTED_PRACTICE_QUESTIONS}
+    changed = False
+    for question in db.query(Question).filter(Question.origin_type == "extracted").all():
+        source_item = current_by_stem.get(question.stem)
+        if source_item is None:
+            continue
+        question.origin_type = source_item["origin_type"]
+        question.source = source_item["source"]
+        changed = True
+    if changed:
+        db.commit()
 
 
 def get_practice_question(

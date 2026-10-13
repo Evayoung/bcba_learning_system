@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from typing import Generator
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 from app.config import settings
@@ -53,6 +53,20 @@ def init_db() -> None:
     import app.models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
+
+    # Add provenance fields to databases created by earlier app versions.
+    # These nullable columns are additive and preserve all existing study data.
+    if "content_chunks" in inspect(engine).get_table_names():
+        existing_columns = {column["name"] for column in inspect(engine).get_columns("content_chunks")}
+        additions = {
+            "qa_status": "VARCHAR(50)",
+            "qa_reviewer": "VARCHAR(255)",
+            "qa_notes": "TEXT",
+        }
+        with engine.begin() as connection:
+            for name, sql_type in additions.items():
+                if name not in existing_columns:
+                    connection.execute(text(f"ALTER TABLE content_chunks ADD COLUMN {name} {sql_type}"))
 
     # Seed curriculum domains & tasks idempotently
     from app.services.curriculum import seed_curriculum

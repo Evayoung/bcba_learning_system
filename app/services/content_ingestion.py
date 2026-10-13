@@ -11,6 +11,7 @@ import glob
 import json
 import os
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from sqlalchemy.orm import Session
@@ -22,6 +23,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PAGES_CLEAN_DIR = BASE_DIR / "data" / "processed" / "pages_clean"
 PAGES_META_DIR = BASE_DIR / "data" / "processed" / "pages"
 SEED_JSON_PATH = BASE_DIR / "data" / "processed" / "seed_content_chunks.json"
+SOURCE_QA_PATH = BASE_DIR / "data" / "processed" / "source_quality_manifest.json"
+
+
+@lru_cache(maxsize=1)
+def _load_source_qa() -> Dict[int, Dict[str, Any]]:
+    """Load page-level source-fidelity decisions for the PTB manual."""
+    if not SOURCE_QA_PATH.exists():
+        return {}
+    with SOURCE_QA_PATH.open("r", encoding="utf-8") as source_file:
+        manifest = json.load(source_file)
+    return {
+        int(page["pdf_page_index"]): page
+        for page in manifest.get("pages", [])
+        if page.get("source_fidelity_status") == "verified"
+    }
 
 
 def extract_task_codes(text_snippet: str, header_tag: Optional[str] = None) -> List[str]:
@@ -48,8 +64,8 @@ def parse_page_chunks(page_num: int, md_text: str, meta: Dict[str, Any]) -> List
     printed_page = tr.get("printed_page_number")
     header_tag = tr.get("header_domain_tag")
     content_type = tr.get("content_type", "prose")
-    needs_review = tr.get("needs_review", False)
-    verification_status = "flagged" if needs_review else "unverified"
+    source_qa = _load_source_qa().get(page_num - 1, {})
+    verification_status = source_qa.get("source_fidelity_status", "unverified")
 
     clean_text = md_text.strip()
     if not clean_text:
@@ -94,6 +110,9 @@ def parse_page_chunks(page_num: int, md_text: str, meta: Dict[str, Any]) -> List
             "raw_reference": f"data/processed/pages_clean/page_{page_num:04d}.md",
             "extraction_status": "normalized",
             "verification_status": verification_status,
+            "qa_status": source_qa.get("qa_status"),
+            "qa_reviewer": source_qa.get("qa_reviewer"),
+            "qa_notes": source_qa.get("qa_notes"),
             "domain_code": domain_code,
             "task_code": primary_task,
         })
@@ -207,6 +226,9 @@ def _import_from_seed_json(db: Session, domains: Dict, tasks: Dict) -> Dict[str,
             raw_reference=c_data.get("raw_reference"),
             extraction_status=c_data.get("extraction_status", "exported"),
             verification_status=c_data.get("verification_status", "unverified"),
+            qa_status=c_data.get("qa_status"),
+            qa_reviewer=c_data.get("qa_reviewer"),
+            qa_notes=c_data.get("qa_notes"),
         )
         db.add(chunk)
         imported_count += 1
@@ -231,6 +253,7 @@ def import_content_chunks(db: Session, force: bool = False) -> Dict[str, int]:
 
     existing_count = db.query(ContentChunk).count()
     if existing_count > 0 and not force:
+        _sync_existing_chunk_qa(db)
         return {"chunks_imported": 0, "total_chunks": existing_count}
 
     if force:
@@ -291,6 +314,9 @@ def import_content_chunks(db: Session, force: bool = False) -> Dict[str, int]:
                 raw_reference=c_data["raw_reference"],
                 extraction_status=c_data["extraction_status"],
                 verification_status=c_data["verification_status"],
+                qa_status=c_data.get("qa_status"),
+                qa_reviewer=c_data.get("qa_reviewer"),
+                qa_notes=c_data.get("qa_notes"),
             )
             db.add(chunk)
             imported_count += 1
@@ -299,3 +325,28 @@ def import_content_chunks(db: Session, force: bool = False) -> Dict[str, int]:
     rebuild_fts_index(db)
 
     return {"chunks_imported": imported_count, "total_chunks": db.query(ContentChunk).count()}
+
+
+def _sync_existing_chunk_qa(db: Session) -> None:
+    """Apply the reviewed corpus status to already-seeded PTB chunks."""
+    page_status = _load_source_qa()
+    if not page_status:
+        return
+    chunks = (
+        db.query(ContentChunk)
+        .filter(ContentChunk.source_document.ilike("PTB ABA Exam Study Manual%"))
+        .filter(ContentChunk.pdf_page_index.isnot(None))
+        .all()
+    )
+    changed = False
+    for chunk in chunks:
+        source_qa = page_status.get(chunk.pdf_page_index)
+        if source_qa is None:
+            continue
+        chunk.verification_status = "verified"
+        chunk.qa_status = source_qa.get("qa_status")
+        chunk.qa_reviewer = source_qa.get("qa_reviewer")
+        chunk.qa_notes = source_qa.get("qa_notes")
+        changed = True
+    if changed:
+        db.commit()

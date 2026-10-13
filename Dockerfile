@@ -23,6 +23,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY assets/ ./assets/
 COPY data/processed/seed_content_chunks.json ./data/processed/seed_content_chunks.json
+COPY data/processed/source_quality_manifest.json ./data/processed/source_quality_manifest.json
+COPY data/processed/tco_6th_edition_tasks.json ./data/processed/tco_6th_edition_tasks.json
+COPY data/processed/adapted_practice_questions.py ./data/processed/adapted_practice_questions.py
 COPY main.py .
 COPY .env.example .
 

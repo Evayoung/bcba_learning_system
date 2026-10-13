@@ -1,7 +1,7 @@
-"""Raw extracted review questions from the PTB Study Manual chapters.
+"""Adapted multiple-choice practice items based on PTB Study Manual concepts.
 
-Provides verified, structured multiple-choice questions constructed directly from
-the manual's review question concepts and answer keys across Domains A through I.
+These are supplementary scenario questions, not verbatim extractions of the
+manual's open-response review questions or answer keys.
 Each item features:
 - Authentic task code mapping
 - 4 explicit options (A, B, C, D)
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import List, Dict, Any
 
-VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
+ADAPTED_PRACTICE_QUESTIONS: List[Dict[str, Any]] = [
     # --- DOMAIN A ---
     {
         "task_code": "A.1",
@@ -35,8 +35,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Empiricism is a philosophical attitude/assumption (objective observation and quantification), not a level of scientific understanding.",
         },
         "difficulty": "medium",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 3 (Task A.1)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 3 (Task A.1)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -57,8 +57,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Pragmatism evaluates the truth of an assertion by its practical and effective application.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 4 (Task A.2)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 4 (Task A.2)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -72,15 +72,15 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             {"id": "D", "text": "Private events function as uncaused initiating agents that determine overt physical actions."},
         ],
         "correct_option": "B",
-        "rationale": "Radical behaviorism includes all behavior—both public and private. Skinner posited that private events are physical events occurring within the skin, governed by the same environmental and operant/respondent principles as overt behavior.",
+        "rationale": "Radical behaviorism includes all behaviorâ€”both public and private. Skinner posited that private events are physical events occurring within the skin, governed by the same environmental and operant/respondent principles as overt behavior.",
         "distractor_rationales": {
             "A": "This represents mentalism and dualism, which Skinner explicitly rejected.",
             "C": "This reflects methodological behaviorism, which restricts analysis strictly to publicly observable events.",
             "D": "Radical behaviorism rejects private events as initiating causes; private events are behaviors requiring their own explanation.",
         },
         "difficulty": "medium",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 6 (Task A.3)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 6 (Task A.3)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -101,8 +101,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Generality means behavior change maintains over time, transfers across settings, or spreads to novel collateral behaviors.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 15 (Task A.5)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 15 (Task A.5)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
 
@@ -125,8 +125,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "A discriminative stimulus is an antecedent stimulus that signals the availability of reinforcement, not a consequent stimulus.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 45 (Task B.4)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 45 (Task B.4)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -147,8 +147,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Extinction involves withholding reinforcement for a previously reinforced response, resulting in a rate decrease.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 48 (Task B.5)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 48 (Task B.5)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -169,8 +169,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Variable Interval delivers reinforcement for the first response after an average amount of time has elapsed.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 57 (Task B.9)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 57 (Task B.9)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -191,8 +191,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Fixed Interval produces the FI scallop effect, not a steady high rate.",
         },
         "difficulty": "medium",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 66 (Task B.10)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 66 (Task B.10)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
 
@@ -215,8 +215,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Celeration measures changes in rate of responding over time.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 76 (Task C.2)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 76 (Task C.2)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
@@ -237,8 +237,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Calculated by dividing agreements by Observer 1's total.",
         },
         "difficulty": "hard",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 89 (Task C.8)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 89 (Task C.8)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
 
@@ -261,8 +261,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Changing Criterion is used to evaluate step-by-step changes in a single behavior that has a directional target.",
         },
         "difficulty": "medium",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 145 (Task D.2)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 145 (Task D.2)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
 
@@ -285,14 +285,14 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Behavioral contrast occurs across multiple settings when the schedule of reinforcement changes in one component.",
         },
         "difficulty": "medium",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 260 (Task G.1)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 260 (Task G.1)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
     {
         "task_code": "G.14",
         "domain_code": "G",
-        "stem": "A trainer teaches a child to wash hands by breaking the complex skill down into 8 sequential steps. During training, the child independently completes step 1 and receives reinforcement; steps 2–8 are prompted by the trainer. On subsequent sessions, reinforcement is delivered only after completing steps 1 and 2. Which chaining method is being used?",
+        "stem": "A trainer teaches a child to wash hands by breaking the complex skill down into 8 sequential steps. During training, the child independently completes step 1 and receives reinforcement; steps 2â€“8 are prompted by the trainer. On subsequent sessions, reinforcement is delivered only after completing steps 1 and 2. Which chaining method is being used?",
         "options": [
             {"id": "A", "text": "Forward Chaining"},
             {"id": "B", "text": "Backward Chaining"},
@@ -307,8 +307,8 @@ VERIFIED_MANUAL_QUESTIONS: List[Dict[str, Any]] = [
             "D": "Backward chaining with leap ahead skips steps the learner already has in their repertoire.",
         },
         "difficulty": "easy",
-        "source": "PTB ABA Exam Study Manual 6th Edition • Page 285 (Task G.14)",
-        "origin_type": "extracted",
+        "source": "PTB ABA Exam Study Manual 6th Edition â€¢ concept source; adapted practice item, page 285 (Task G.14)",
+        "origin_type": "adapted",
         "verification_status": "verified",
     },
 ]

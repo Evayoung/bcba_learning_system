@@ -53,16 +53,21 @@ the better one there.
 | Near-empty pages (header only, "my Notes" page) | 4 | correctly reported as near-blank with header/footer text |
 | Printed page number unreadable | 0 of 393 non-blank pages | all read from footers; monotonic, no gaps |
 
-## Verdict
+## Source fidelity status
 
-The transcription is **usable for content retrieval**: reading order, tables,
-callouts, headings, task codes and page numbers all survived, and an
-independent engine agrees on content for 13/14 sampled pages.
+The extraction report above is the machine-ingestion baseline. It predates the
+human review and must not be used as the current status by itself. Every page
+flagged during extraction was compared with its source image; corrections and
+review notes remain in each page's `engine_transcript`, `qa_status`,
+`qa_reviewer`, and `qa_notes`. Corpus-wide scans found zero `<unk>` runs,
+literal newline artifacts, placeholder transcripts, or repeating-digit
+degeneration. The project owner confirms that the available transcripts match
+the scanned source. The deployable `data/processed/source_quality_manifest.json`
+records this source-fidelity status and the page-level QA references.
 
-It remains **unverified as a source of truth**. Everything still has to be read
-against the page image before it becomes curriculum or an answer key, and the
-15 pages flagged `needs_review` (plus the 1 RapidOCR page) need that pass
-first.
+Source fidelity means the available text faithfully represents the scan. It is
+separate from whether a source is current official BACB guidance or whether a
+practice question is suitable for scored practice.
 
 ## Review queue (from `data/processed/ingest_report.json`)
 
@@ -122,9 +127,19 @@ These are reported as `answer_only` with the gap documented in `source_gaps`;
 the missing text is not reconstructed. Domain E also has questions 36–40 with no
 answer in the key (the E key ends at 35).
 
-### Status
+### Status and app usage
 
-Question text and answers are machine-parsed and human-reviewed where
-indicated, but the set is **not verified curriculum**. Nothing here should be
-presented to a learner as a verified question until the pairs are checked
-against the pages named in each entry's provenance.
+The parsed question text and answer-key entries preserve their source-page
+provenance and were matched only by domain and question number. There are 230
+matched pairs, 50 answer-only records, and five question-only records. The 50
+answer-only records and five question-only records are incomplete and must not
+be scored or reconstructed. The missing question pages are absent from the
+scan, not OCR failures.
+
+The source questions include fill-in-the-blank, true/false, matching, and short
+answer formats. The current application schema accepts four-option
+multiple-choice questions, so these source questions have not been imported or
+converted. The 13 app questions are separate adapted scenario practice items;
+their manual page references identify concept sources, not verbatim question
+text. `source_quality_manifest.json` carries the verified source-fidelity
+status and explicit gap inventory for deployment.

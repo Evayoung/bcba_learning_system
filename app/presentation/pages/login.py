@@ -3,16 +3,13 @@
 from __future__ import annotations
 
 from typing import Optional
-from fasthtml.common import Div, H2, H4, P, Span, Form, A, Small
-from faststrap import (
-    Alert, Button, Card, Col, Icon, Input, Row, StatusBadge,
-)
+from fasthtml.common import Div, H2, P, Span, Form
+from faststrap import Alert, Button, Card, Icon, Input
 
 
 def render_login_page(
     error: Optional[str] = None,
-    default_email: str = "student@bcba.prep",
-    default_password: str = "bcba2026password",
+    setup_required: bool = False,
 ) -> list:
     """Render the clean, secure candidate sign-in page."""
 
@@ -37,7 +34,7 @@ def render_login_page(
                     cls="mb-3",
                 ),
                 H2("BCBA Study Assistant", cls="h4 fw-bold text-dark mb-1"),
-                P("Sign in to access your guided tutor, practice items, and mock exams.", cls="text-muted small mb-4"),
+                P("Sign in to continue your study session.", cls="text-muted small mb-4"),
                 cls="text-center",
             ),
             alert if alert else None,
@@ -47,7 +44,6 @@ def render_login_page(
                     "email",
                     input_type="email",
                     label="Email Address",
-                    value=default_email,
                     required=True,
                     placeholder="you@domain.com",
                     cls="mb-3",
@@ -56,7 +52,6 @@ def render_login_page(
                     "password",
                     input_type="password",
                     label="Password",
-                    value=default_password,
                     required=True,
                     placeholder="Enter password",
                     cls="mb-4",
@@ -72,15 +67,11 @@ def render_login_page(
                 action="/login",
                 data_loading_text="Signing in...",
             ),
-            # Default credential reminder pill
-            Div(
-                Div(
-                    Icon("info-circle", cls="text-primary me-2"),
-                    Span("Default Access:", cls="fw-bold small text-dark me-1"),
-                    Span(f"{default_email} • {default_password}", cls="small text-muted font-monospace"),
-                    cls="d-flex align-items-center justify-content-center flex-wrap pt-3 mt-4 border-top",
-                ),
-                P("You can update your email & password anytime in the Settings tab.", cls="text-center text-muted small mt-1 mb-0"),
+            P(
+                "No account has been created yet. Contact the app owner for access."
+                if setup_required
+                else "For account access, contact the app owner.",
+                cls="text-center text-muted small mt-3 mb-0",
             ),
             cls="p-4",
         ),

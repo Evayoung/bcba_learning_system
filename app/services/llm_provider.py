@@ -84,7 +84,7 @@ class LLMProviderAdapter:
             self.api_key = api_key if api_key is not None else (runtime.get("gemini_api_key") or settings.gemini_api_key or "")
             self.model = model or runtime.get("llm_model") or settings.llm_model or "gemini-flash-latest"
         elif self.provider == "openrouter":
-            self.api_key = api_key if api_key is not None else (runtime.get("openrouter_api_key") or settings.openrouter_api_key or os.environ.get("OPENROUTER_API_KEY_1") or "")
+            self.api_key = api_key if api_key is not None else (runtime.get("openrouter_api_key") or settings.openrouter_api_key or "")
             self.model = model or runtime.get("llm_model") or settings.llm_model or "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
         else:
             self.api_key = api_key or ""
@@ -240,8 +240,11 @@ class LLMProviderAdapter:
         conversation_history: Optional[List[Dict[str, str]]] = None,
     ) -> LLMResponse:
         """Call Google Gemini REST API."""
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key}"
-        headers = {"Content-Type": "application/json"}
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": self.api_key,
+        }
 
         contents = []
         if conversation_history:
@@ -251,13 +254,16 @@ class LLMProviderAdapter:
 
         contents.append({"role": "user", "parts": [{"text": user_message}]})
 
+        generation_config = {"maxOutputTokens": 1024}
+        # Gemini 3.x models reject legacy sampling controls such as temperature.
+        # Keep the previous setting for older Gemini models still supported by the app.
+        if not self.model.startswith(("gemini-3.", "gemini-4-")):
+            generation_config["temperature"] = 0.4
+
         payload = {
             "systemInstruction": {"parts": [{"text": system_instruction}]},
             "contents": contents,
-            "generationConfig": {
-                "temperature": 0.4,
-                "maxOutputTokens": 1024,
-            },
+            "generationConfig": generation_config,
         }
 
         with httpx.Client(timeout=self.timeout) as client:

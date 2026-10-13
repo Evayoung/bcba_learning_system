@@ -23,7 +23,7 @@ NAV_ITEMS = (
     ("Practice", "/practice", "check2-square"),
     ("Progress", "/progress", "graph-up"),
     ("Mock Exam", "/mock", "stopwatch"),
-    ("Settings / AI", "/settings", "gear"),
+    ("Account Settings", "/settings", "gear"),
 )
 
 PAGE_SUBTITLES = {
@@ -32,7 +32,7 @@ PAGE_SUBTITLES = {
     "/practice": "Test your mastery with active recall, rationale explanations, and distractor analysis.",
     "/progress": "Inspect domain-by-domain accuracy, review queue status, and identify learning gaps.",
     "/mock": "Full-length and domain-focused timed practice sessions aligned with the 6th Edition TCO.",
-    "/settings": "Configure Google Gemini, Groq, or OpenRouter API keys and adjust active models.",
+    "/settings": "Manage your sign-in details and view AI service availability.",
 }
 
 

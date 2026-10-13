@@ -35,9 +35,9 @@ class QuestionSchema(BaseModel):
     task_code: Optional[str] = Field(None, description="e.g. 'B.4' or 'A.1'")
     domain_code: Optional[str] = Field(None, description="e.g. 'A' through 'I'")
     difficulty: str = Field("medium", description="easy, medium, hard")
-    origin_type: str = Field("extracted", description="extracted, manual, generated")
+    origin_type: str = Field("unclassified", description="manual, adapted, generated, or unclassified")
     source: str = Field("PTB ABA Exam Study Manual 6th Edition", description="Source citation or reference")
-    verification_status: str = Field("verified", description="verified, unverified, flagged")
+    verification_status: str = Field("unverified", description="verified, unverified, flagged")
 
     @field_validator("correct_option")
     @classmethod

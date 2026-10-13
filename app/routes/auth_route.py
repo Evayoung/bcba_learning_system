@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from typing import Any
 from fasthtml.common import Redirect
-from app.db import get_db
+from app.db import SessionLocal
+from app.models import User
 from app.presentation.pages.login import render_login_page
-from app.services.auth import authenticate_user, seed_default_user, DEFAULT_EMAIL, DEFAULT_PASSWORD
+from app.services.auth import authenticate_user
 
 
 def register_auth_routes(app: Any) -> None:
@@ -17,30 +18,26 @@ def register_auth_routes(app: Any) -> None:
         if session.get("user_id"):
             return Redirect("/")
 
-        db = next(get_db())
-        seed_default_user(db)
-
-        return render_login_page(
-            default_email=DEFAULT_EMAIL,
-            default_password=DEFAULT_PASSWORD,
-        )
+        with SessionLocal() as db:
+            setup_required = db.query(User.id).first() is None
+        return render_login_page(setup_required=setup_required)
 
     @app.post("/login")
     def login_action(session, email: str = "", password: str = ""):
-        db = next(get_db())
-        seed_default_user(db)
-
-        user = authenticate_user(db, email=email, password=password)
+        with SessionLocal() as db:
+            setup_required = db.query(User.id).first() is None
+            user = authenticate_user(db, email=email, password=password)
+            user_id = user.id if user else None
+            user_email = user.email if user else None
         if not user:
             return render_login_page(
-                error="Invalid email or password. Please check your credentials.",
-                default_email=email or DEFAULT_EMAIL,
-                default_password="",
+                error=None if setup_required else "Invalid email or password. Please check your credentials.",
+                setup_required=setup_required,
             )
 
         # Set session cookie
-        session["user_id"] = user.id
-        session["user_email"] = user.email
+        session["user_id"] = user_id
+        session["user_email"] = user_email
 
         return Redirect("/")
 
