@@ -8,7 +8,7 @@ dependencies = [
     # Web Framework
     "fastapi[standard]>=0.115.0",
     "python-fasthtml>=0.14.13",
-    "faststrap",
+    "faststrap[markdown]",
     "uvicorn>=0.38.0",
     "starlette>=1.6.0",
     "python-multipart>=0.0.20",
