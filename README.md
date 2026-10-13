@@ -12,7 +12,7 @@ An AI-powered study companion for the BCBA exam, built on the **PTB ABA Exam Stu
 |--------|--------------|
 | **AI Tutor** | Ask BCBA topics; the tutor retrieves source-verified manual chunks and displays printed-page citations |
 | **Practice** | Practice with 13 adapted multiple-choice items based on manual concepts; they are not verbatim manual review questions |
-| **Short Practice Set** | A 13-question, 60-minute activity from the current small adapted question pool; it is not a full exam simulation |
+| **Practice Sets** | Choose 5, 10, or up to 13 verified adapted questions; timed (30/45/60 minutes) or untimed. This is not a full exam simulation or a pass prediction |
 | **Progress** | Review attempt totals, accuracy, and domain summaries |
 | **Settings** | Account credential updates and AI service availability |
 | **Auth** | Private account seeded from operator secrets; no shared default login |

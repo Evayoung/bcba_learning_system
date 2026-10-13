@@ -22,6 +22,7 @@ def render_practice_view(
     question: Optional[Question],
     attempt: Optional[Attempt] = None,
     domain_code: Optional[str] = None,
+    task_code: Optional[str] = None,
     all_domains: Optional[List[tuple]] = None,
     next_question_id: Optional[int] = None,
 ) -> list:
@@ -36,6 +37,7 @@ def render_practice_view(
         ("G", "Domain G: Behavior-Change"),
     ]
     selected_domain = domain_code or "all"
+    selected_task = task_code or ""
 
     # ── Filter bar ─────────────────────────────────────────────────────────────
     filter_card = Card(
@@ -179,8 +181,12 @@ def render_practice_view(
             A(
                 Button("Next Question →", variant="primary", icon="arrow-right"),
                 href=(
-                    f"/practice?domain={selected_domain}&qid={next_question_id}"
+                    f"/practice?task={selected_task}&qid={next_question_id}"
+                    if selected_task and next_question_id
+                    else f"/practice?domain={selected_domain}&qid={next_question_id}"
                     if next_question_id
+                    else f"/practice?task={selected_task}"
+                    if selected_task
                     else f"/practice?domain={selected_domain}"
                 ),
                 cls="text-decoration-none",
@@ -204,6 +210,7 @@ def render_practice_view(
         q_content = Form(
             Input(type="hidden", name="question_id",  value=str(question.id)),
             Input(type="hidden", name="domain_code",  value=selected_domain),
+            Input(type="hidden", name="task_code", value=selected_task),
             Div(
                 question_badges,
                 H3(question.stem, cls="h5 fw-bold mb-4 text-dark lh-base"),

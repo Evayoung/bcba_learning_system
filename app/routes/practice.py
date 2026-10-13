@@ -31,7 +31,7 @@ DOMAIN_OPTIONS = [
 
 def register_practice_routes(app: Any) -> None:
     @app.get("/practice")
-    def practice(domain: str = "all", qid: Optional[int] = None):
+    def practice(domain: str = "all", qid: Optional[int] = None, task: Optional[str] = None):
         db = next(get_db())
 
         # Ensure questions seeded
@@ -41,6 +41,7 @@ def register_practice_routes(app: Any) -> None:
             db,
             question_id=qid,
             domain_code=domain if domain != "all" else None,
+            task_code=task,
         )
 
         return page_frame(
@@ -48,6 +49,7 @@ def register_practice_routes(app: Any) -> None:
                 question=question,
                 attempt=None,
                 domain_code=domain,
+                task_code=task,
                 all_domains=DOMAIN_OPTIONS,
             ),
             current="/practice",
@@ -60,6 +62,7 @@ def register_practice_routes(app: Any) -> None:
         selected_option: str = "",
         confidence: str = "medium",
         domain_code: str = "all",
+        task_code: Optional[str] = None,
     ):
         db = next(get_db())
 
@@ -71,6 +74,7 @@ def register_practice_routes(app: Any) -> None:
                     question=question,
                     attempt=None,
                     domain_code=domain_code,
+                    task_code=task_code,
                     all_domains=DOMAIN_OPTIONS,
                 ),
                 current="/practice",
@@ -85,25 +89,24 @@ def register_practice_routes(app: Any) -> None:
         attempt, question, is_correct = record_attempt(db, submission)
 
         # Find the next question for the "Next Question" button
-        next_q = get_practice_question(
-            db,
-            domain_code=domain_code if domain_code != "all" else None,
+        next_query = db.query(Question).filter(
+            Question.verification_status == "verified"
         )
-        # Avoid the same question appearing again immediately
-        if next_q and next_q.id == question_id:
-            all_q = (
-                db.query(Question)
-                .filter(Question.verification_status == "verified", Question.id != question_id)
-                .order_by(Question.id.asc())
-                .first()
-            )
-            next_q = all_q
+        if task_code and question.task_id:
+            next_query = next_query.filter(Question.task_id == question.task_id)
+        elif domain_code != "all" and question.task and question.task.domain:
+            domain_task_ids = [task.id for task in question.task.domain.tasks]
+            next_query = next_query.filter(Question.task_id.in_(domain_task_ids))
+        next_q = next_query.filter(Question.id > question_id).order_by(Question.id.asc()).first()
+        if next_q is None:
+            next_q = next_query.filter(Question.id <= question_id).order_by(Question.id.asc()).first()
 
         return page_frame(
             *render_practice_view(
                 question=question,
                 attempt=attempt,
                 domain_code=domain_code,
+                task_code=task_code,
                 all_domains=DOMAIN_OPTIONS,
                 next_question_id=next_q.id if next_q else None,
             ),

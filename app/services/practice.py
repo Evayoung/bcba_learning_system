@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Any, Tuple
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, case, and_, or_
 
 from app.models import Domain, Task, Question, Attempt, StudySession, ReviewItem
 from app.schemas.question import QuestionSchema, AttemptSubmissionSchema
@@ -107,6 +107,7 @@ def record_attempt(
 
     is_correct = (submission.selected_option.strip().upper() == question.correct_option.strip().upper())
 
+    now = _utc_now()
     attempt = Attempt(
         question_id=question.id,
         session_id=session_id,
@@ -114,7 +115,7 @@ def record_attempt(
         is_correct=is_correct,
         confidence=submission.confidence,
         response_time_seconds=submission.response_time_seconds,
-        answered_at=_utc_now(),
+        answered_at=now,
     )
     db.add(attempt)
 
@@ -122,62 +123,135 @@ def record_attempt(
     if question.task_id:
         review_item = db.query(ReviewItem).filter(ReviewItem.task_id == question.task_id).first()
         if not review_item:
+            interval_days = _review_interval_days(is_correct, submission.confidence)
             review_item = ReviewItem(
                 task_id=question.task_id,
                 concept_name=question.task.official_description if question.task else None,
-                interval_days=1 if not is_correct else 3,
+                interval_days=interval_days,
                 consecutive_correct=1 if is_correct else 0,
-                last_reviewed_at=_utc_now(),
+                last_reviewed_at=now,
+                due_date=now + timedelta(days=interval_days),
             )
             db.add(review_item)
         else:
-            review_item.last_reviewed_at = _utc_now()
+            review_item.last_reviewed_at = now
             if is_correct:
                 review_item.consecutive_correct += 1
-                review_item.interval_days = min(30, review_item.interval_days * 2)
+                review_item.interval_days = _review_interval_days(
+                    True, submission.confidence, review_item.interval_days
+                )
             else:
                 review_item.consecutive_correct = 0
-                review_item.interval_days = 1
+                review_item.interval_days = _review_interval_days(False, submission.confidence)
+            review_item.due_date = now + timedelta(days=review_item.interval_days)
 
     db.commit()
     db.refresh(attempt)
     return attempt, question, is_correct
 
 
+def _review_interval_days(is_correct: bool, confidence: str, previous: Optional[int] = None) -> int:
+    """Use modest review intervals; low confidence slows progression even when correct."""
+    if not is_correct:
+        return 1
+    if confidence == "low":
+        return min(3, max(2, previous or 2))
+    if previous is None:
+        return 4 if confidence == "high" else 3
+    return min(30, max(1, previous) * 2)
+
+
+def repair_legacy_review_dates(db: Session) -> None:
+    """Move stale legacy due dates forward from their last recorded review."""
+    items = db.query(ReviewItem).filter(ReviewItem.last_reviewed_at.isnot(None)).all()
+    changed = False
+    for item in items:
+        last_reviewed = item.last_reviewed_at
+        due_date = item.due_date
+        if last_reviewed and due_date:
+            # SQLite may return naive datetimes for values originally stored in UTC.
+            if last_reviewed.tzinfo is None:
+                last_reviewed = last_reviewed.replace(tzinfo=timezone.utc)
+            if due_date.tzinfo is None:
+                due_date = due_date.replace(tzinfo=timezone.utc)
+            if due_date <= last_reviewed:
+                item.due_date = last_reviewed + timedelta(days=max(1, item.interval_days or 1))
+                changed = True
+    if changed:
+        db.commit()
+
+
 def get_practice_statistics(db: Session) -> Dict[str, Any]:
-    """Calculate overall and domain accuracy from verified attempts."""
-    total_attempts = db.query(Attempt).count()
-    correct_attempts = db.query(Attempt).filter(Attempt.is_correct == True).count()
+    """Calculate progress only from verified questions, with task and review signals."""
+    verified_attempts = db.query(Attempt).join(Question, Attempt.question_id == Question.id).filter(
+        Question.verification_status == "verified"
+    )
+    total_attempts = verified_attempts.count()
+    correct_attempts = verified_attempts.filter(Attempt.is_correct.is_(True)).count()
     overall_accuracy = round((correct_attempts / total_attempts) * 100, 1) if total_attempts > 0 else 0.0
 
-    # Domain accuracy breakdown
+    domain_rows = db.query(
+        Domain.code, Domain.title, Domain.exam_weight,
+        func.count(Attempt.id).label("attempts"),
+        func.coalesce(func.sum(case((Attempt.is_correct.is_(True), 1), else_=0)), 0).label("correct"),
+    ).outerjoin(Task, Task.domain_id == Domain.id).outerjoin(
+        Question, and_(Question.task_id == Task.id, Question.verification_status == "verified")
+    ).outerjoin(Attempt, Attempt.question_id == Question.id).group_by(
+        Domain.id, Domain.code, Domain.title, Domain.exam_weight
+    ).order_by(Domain.code.asc()).all()
     domain_stats = []
-    domains = db.query(Domain).order_by(Domain.code.asc()).all()
-
-    for d in domains:
-        t_ids = [t.id for t in d.tasks]
-        d_attempts = (
-            db.query(Attempt)
-            .join(Question, Attempt.question_id == Question.id)
-            .filter(Question.task_id.in_(t_ids))
-            .all()
-        )
-        d_total = len(d_attempts)
-        d_correct = sum(1 for a in d_attempts if a.is_correct)
-        d_acc = round((d_correct / d_total) * 100, 1) if d_total > 0 else 0.0
-
+    for row in domain_rows:
+        d_total, d_correct = row.attempts, int(row.correct)
         domain_stats.append({
-            "code": d.code,
-            "title": d.title,
-            "weight": d.exam_weight,
-            "attempts": d_total,
-            "correct": d_correct,
-            "accuracy": d_acc,
+            "code": row.code, "title": row.title, "weight": row.exam_weight,
+            "attempts": d_total, "correct": d_correct,
+            "accuracy": round((d_correct / d_total) * 100, 1) if d_total else 0.0,
         })
+
+    task_rows = db.query(
+        Task.code, Task.official_description, Domain.code.label("domain_code"),
+        func.count(Attempt.id).label("attempts"),
+        func.coalesce(func.sum(case((Attempt.is_correct.is_(True), 1), else_=0)), 0).label("correct"),
+    ).join(Domain, Task.domain_id == Domain.id).outerjoin(
+        Question, and_(Question.task_id == Task.id, Question.verification_status == "verified")
+    ).outerjoin(Attempt, Attempt.question_id == Question.id).group_by(
+        Task.id, Task.code, Task.official_description, Domain.code
+    ).order_by(Task.code.asc()).all()
+    task_stats = []
+    for row in task_rows:
+        if not row.attempts:
+            continue
+        correct = int(row.correct)
+        task_stats.append({
+            "code": row.code, "description": row.official_description,
+            "domain_code": row.domain_code, "attempts": row.attempts,
+            "correct": correct,
+            "accuracy": round((correct / row.attempts) * 100, 1),
+        })
+
+    signals = db.query(Attempt, Question, Task, Domain).join(
+        Question, Attempt.question_id == Question.id
+    ).outerjoin(Task, Question.task_id == Task.id).outerjoin(
+        Domain, Task.domain_id == Domain.id
+    ).filter(
+        Question.verification_status == "verified",
+        or_(Attempt.is_correct.is_(False), Attempt.confidence == "low"),
+    ).order_by(Attempt.answered_at.desc(), Attempt.id.desc()).limit(8).all()
+    recent_signals = [{
+        "question_id": attempt.question_id,
+        "task_code": task.code if task else None,
+        "domain_code": domain.code if domain else None,
+        "stem": question.stem,
+        "is_correct": attempt.is_correct,
+        "confidence": attempt.confidence,
+        "answered_at": attempt.answered_at,
+    } for attempt, question, task, domain in signals]
 
     return {
         "total_attempts": total_attempts,
         "correct_attempts": correct_attempts,
         "overall_accuracy": overall_accuracy,
         "domains": domain_stats,
+        "tasks": task_stats,
+        "recent_signals": recent_signals,
     }
