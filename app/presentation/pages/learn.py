@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Any
 from fasthtml.common import Div, H3, H4, P, Span, Form, A, Textarea, Small
-from faststrap import Badge, Button, Card, Col, Icon, Input, Markdown, Row, Select
+from faststrap import Alert, Badge, Button, Card, Col, Icon, Input, Markdown, Row, Select
 from app.services.retrieval import RetrievalResult
 
 
@@ -47,10 +47,10 @@ def render_tutor_response_box(
     mode: str,
     task_code: Optional[str] = None,
     error: Optional[str] = None,
+    fallback_used: bool = False,
 ) -> Any:
     """Render the AI Tutor explanation box with strict provenance badge."""
     if error:
-        is_quota_or_key = "429" in error or "quota" in error.lower() or "api key" in error.lower() or "unauthorized" in error.lower()
         return Card(
             Div(
                 Div(
@@ -59,15 +59,10 @@ def render_tutor_response_box(
                     cls="d-flex align-items-center mb-2",
                 ),
                 P(error, cls="small text-danger mb-3"),
-                Div(
-                    A(
-                        Button("Update API Key in Settings →", variant="outline-primary", size="sm", icon="gear-fill"),
-                        href="/settings",
-                        cls="text-decoration-none",
-                    ),
-                    Span("You can easily paste a new Gemini or Groq key without restarting the app.", cls="text-muted small ms-2") if is_quota_or_key else None,
-                    cls="d-flex align-items-center flex-wrap gap-2 pt-2 border-top",
-                ) if is_quota_or_key else None,
+                P(
+                    "If the problem continues, contact the app owner. Provider credentials are managed securely outside learner settings.",
+                    cls="text-muted small border-top pt-2 mb-0",
+                ),
                 cls="p-3",
             ),
             cls="border-warning bg-light mb-4",
@@ -100,6 +95,11 @@ def render_tutor_response_box(
                 cls="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-2 mb-3 border-bottom",
             ),
             Div(
+                Alert(
+                    "The primary AI service was temporarily unavailable. This response came from the free backup model; check it against the cited manual excerpts.",
+                    variant="info",
+                    cls="mb-3",
+                ) if fallback_used else None,
                 Span(f'Prompt: "{user_prompt}"', cls="small text-muted fw-bold d-block mb-3 fst-italic"),
                 Div(
                     Markdown(tutor_text) if tutor_text else P("No response text generated.", cls="text-muted small"),
@@ -194,7 +194,12 @@ def learn_page(
             Form(
                 Row(
                     Col(
-                        Select("domain", *domain_options, label="Select Domain", selected=selected_val, cls="mb-2"),
+                        Select(
+                            "domain",
+                            *((value, label, value == selected_val) for value, label in domain_options),
+                            label="Select Domain",
+                            cls="mb-2",
+                        ),
                         span=12, md=5,
                     ),
                     Col(
@@ -289,6 +294,54 @@ def learn_page(
                 mode=tutor_response.get("mode", selected_mode),
                 task_code=tutor_response.get("task_code"),
                 error=tutor_response.get("error"),
+                fallback_used=tutor_response.get("fallback_used", False),
+            )
+        )
+
+    # Let the learner answer a Socratic question and submit it for feedback.
+    if (
+        tutor_response
+        and not tutor_response.get("error")
+        and tutor_response.get("mode") == "socratic"
+        and tutor_response.get("content")
+    ):
+        items.append(
+            Card(
+                Div(
+                    Div(
+                        Icon("chat-square-text", size="1.3rem", cls="text-info me-2"),
+                        H4("Your Answer", cls="h6 fw-bold mb-0 text-info"),
+                        cls="d-flex align-items-center mb-3",
+                    ),
+                    P(
+                        "Type your response to the tutor's guiding question above, then submit it for feedback.",
+                        cls="text-muted small mb-3",
+                    ),
+                    Form(
+                        Textarea(
+                            name="socratic_answer",
+                            placeholder="Type your answer here...",
+                            cls="mb-2",
+                            rows="3",
+                        ),
+                        Input("previous_tutor_question", value=tutor_response.get("content", ""), type="hidden"),
+                        Input("mode", value="socratic", type="hidden"),
+                        Input("task_code", value=task_code or "", type="hidden"),
+                        Input("domain_code", value=selected_val, type="hidden"),
+                        Button(
+                            "Submit Answer",
+                            variant="info",
+                            type="submit",
+                            cls="w-100 mb-2",
+                            data_loading_text="Sending your answer to the tutor...",
+                        ),
+                        method="post",
+                        action="/learn/ask",
+                        data_loading_text="Sending your answer to the tutor...",
+                    ),
+                    cls="p-3",
+                ),
+                cls="mb-4 shadow-sm border-start border-4 border-info",
             )
         )
 

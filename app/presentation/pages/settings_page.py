@@ -35,6 +35,10 @@ def render_settings_page(
     provider = current_settings.get("llm_provider", "AI tutor")
     model = current_settings.get("llm_model", "")
     configured = current_settings.get("provider_configured", False)
+    fallback_provider = current_settings.get("fallback_provider", "openrouter")
+    fallback_model = current_settings.get("fallback_model", "openrouter/free")
+    fallback_enabled = current_settings.get("fallback_enabled", False)
+    fallback_configured = current_settings.get("fallback_configured", False)
     service_card = Card(
         Div(
             PageHeader(
@@ -56,13 +60,30 @@ def render_settings_page(
                 ),
                 Col(
                     H4("Availability", cls="h6 text-muted mb-1"),
-                    Badge("Ready" if configured else "Temporarily unavailable", variant="success" if configured else "secondary"),
+                    Badge("Key configured" if configured else "Not configured", variant="success" if configured else "secondary"),
                     span=12,
                     md=4,
                 ),
                 cls="g-3",
             ),
-            P("Contact the app owner if the tutor is unavailable or you need help.", cls="small text-muted mt-3 mb-0"),
+            Div(
+                H4("Free backup tutor", cls="h6 text-muted mb-1"),
+                P(
+                    f"{fallback_provider.capitalize()} · {fallback_model}",
+                    cls="fw-semibold mb-1",
+                ),
+                Badge(
+                    "Configured" if fallback_enabled and fallback_configured else "Not configured",
+                    variant="success" if fallback_enabled and fallback_configured else "secondary",
+                ),
+                P(
+                    "Used automatically for temporary AI service overloads or rate limits. "
+                    "Free model availability and rate limits are controlled by the provider.",
+                    cls="small text-muted mt-2 mb-0",
+                ),
+                cls="mt-3 pt-3 border-top",
+            ),
+            P("AI provider credentials are private and managed by the app owner. Contact the owner if both tutors are unavailable.", cls="small text-muted mt-3 mb-0"),
             cls="p-4",
         ),
         cls="mb-4 shadow-sm",
@@ -116,4 +137,40 @@ def render_settings_page(
         ),
         cls="mb-4 shadow-sm",
     )
-    return [*alerts, service_card, account_card]
+
+    reset_card = Card(
+        Div(
+            PageHeader(
+                title="Reset Study Progress",
+                subtitle="Clear saved scores and study queues when you want to start fresh.",
+            ),
+            Alert(
+                "This permanently deletes practice answers and scores, spaced-review progress, and mock/practice session history. Your account, manual content, and questions remain.",
+                variant="warning",
+                cls="mb-3",
+            ),
+            Form(
+                Input(
+                    "confirmation",
+                    label='Type RESET to confirm',
+                    placeholder="RESET",
+                    required=True,
+                    autocomplete="off",
+                    cls="mb-3",
+                ),
+                Button(
+                    "Reset My Study Progress",
+                    variant="danger",
+                    icon="arrow-counterclockwise",
+                    type="submit",
+                    data_loading_text="Resetting study progress...",
+                ),
+                method="post",
+                action="/settings/reset-progress",
+                data_loading_text="Resetting study progress...",
+            ),
+            cls="p-4",
+        ),
+        cls="mb-4 shadow-sm border-danger",
+    )
+    return [*alerts, service_card, account_card, reset_card]

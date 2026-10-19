@@ -47,7 +47,7 @@ def render_practice_view(
                     Col(
                         Select(
                             "domain",
-                            *domain_options,
+                            *((value, label, value == selected_domain) for value, label in domain_options),
                             label="Filter by Domain",
                             cls="mb-2",
                         ),

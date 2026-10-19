@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import List, Dict, Any, Optional
 import httpx
 
@@ -51,12 +52,14 @@ class LLMResponse:
         error_message: Optional[str] = None,
         provider: str = "",
         model: str = "",
+        fallback_used: bool = False,
     ):
         self.content = content
         self.success = success
         self.error_message = error_message
         self.provider = provider
         self.model = model
+        self.fallback_used = fallback_used
 
 
 class LLMProviderAdapter:
@@ -75,6 +78,9 @@ class LLMProviderAdapter:
 
         self.provider = (provider or runtime.get("llm_provider") or settings.llm_provider or "gemini").lower()
         self.timeout = timeout_seconds or settings.llm_timeout_seconds or 45
+        self.fallback_provider = settings.llm_fallback_provider.strip().lower()
+        self.fallback_model = settings.llm_fallback_model.strip()
+        self.fallback_enabled = settings.llm_fallback_enabled
 
         # Provider-specific key and model resolution
         if self.provider == "groq":
@@ -144,11 +150,11 @@ class LLMProviderAdapter:
 
         try:
             if self.provider == "groq":
-                return self._call_groq(messages)
+                primary = self._call_groq(messages)
             elif self.provider == "gemini":
-                return self._call_gemini(system_instruction, user_message, conversation_history)
+                primary = self._call_gemini(system_instruction, user_message, conversation_history)
             elif self.provider == "openrouter":
-                return self._call_openrouter(messages)
+                primary = self._call_openrouter(messages)
             else:
                 return LLMResponse(
                     content="",
@@ -158,7 +164,7 @@ class LLMProviderAdapter:
                 )
         except httpx.TimeoutException:
             logger.error("LLM Provider call timed out.")
-            return LLMResponse(
+            primary = LLMResponse(
                 content="",
                 success=False,
                 error_message=f"The {self.provider} request timed out after {self.timeout}s. Please try again.",
@@ -167,13 +173,84 @@ class LLMProviderAdapter:
             )
         except Exception as e:
             logger.exception("LLM call failed.")
-            return LLMResponse(
+            primary = LLMResponse(
                 content="",
                 success=False,
                 error_message=f"LLM request error: {str(e)}",
                 provider=self.provider,
                 model=self.model,
             )
+
+        if primary.success or not self._is_transient_provider_failure(primary):
+            return primary
+        return self._try_free_fallback(
+            primary=primary,
+            system_instruction=system_instruction,
+            user_message=user_message,
+            conversation_history=conversation_history,
+        )
+
+    @staticmethod
+    def _is_transient_provider_failure(response: LLMResponse) -> bool:
+        """Retry through the backup only for service/rate/timeout failures."""
+        message = response.error_message or ""
+        if "timed out" in message.lower() or "timeout" in message.lower():
+            return True
+        status = re.search(r"API error\s*\((\d{3})\)", message, re.IGNORECASE)
+        return bool(status and int(status.group(1)) in {408, 429, 500, 502, 503, 504})
+
+    def _try_free_fallback(
+        self,
+        primary: LLMResponse,
+        system_instruction: str,
+        user_message: str,
+        conversation_history: Optional[List[Dict[str, str]]],
+    ) -> LLMResponse:
+        """Use OpenRouter's free-model router after temporary primary outages."""
+        fallback_key = settings.openrouter_api_key
+        if (
+            not self.fallback_enabled
+            or self.fallback_provider != "openrouter"
+            or not fallback_key
+            or not self.fallback_model
+        ):
+            return primary
+
+        messages = [{"role": "system", "content": system_instruction}]
+        if conversation_history:
+            messages.extend(conversation_history[-4:])
+        messages.append({"role": "user", "content": user_message})
+        try:
+            fallback = self._call_openrouter(
+                messages, model=self.fallback_model, api_key=fallback_key
+            )
+        except httpx.TimeoutException:
+            logger.warning("Free OpenRouter fallback timed out after primary provider failure.")
+            return LLMResponse(
+                content="", success=False,
+                error_message=f"{primary.error_message} The free backup tutor also timed out; please try again shortly.",
+                provider=self.provider, model=self.model,
+            )
+        except Exception:
+            logger.exception("Free OpenRouter fallback failed after primary provider failure.")
+            return LLMResponse(
+                content="", success=False,
+                error_message=f"{primary.error_message} The free backup tutor is temporarily unavailable; please try again shortly.",
+                provider=self.provider, model=self.model,
+            )
+
+        if fallback.success:
+            fallback.fallback_used = True
+            logger.warning(
+                "Primary tutor provider %s returned a transient error; response served by free fallback %s.",
+                self.provider, self.fallback_model,
+            )
+            return fallback
+        logger.warning("Free OpenRouter fallback returned an error after a transient primary failure.")
+        fallback.error_message = (
+            f"{primary.error_message} The free backup tutor is also unavailable; please try again shortly."
+        )
+        return fallback
 
     def _call_groq(self, messages: List[Dict[str, str]]) -> LLMResponse:
         """Call Groq chat completions endpoint."""
@@ -204,15 +281,20 @@ class LLMProviderAdapter:
                     model=self.model,
                 )
 
-    def _call_openrouter(self, messages: List[Dict[str, str]]) -> LLMResponse:
+    def _call_openrouter(
+        self,
+        messages: List[Dict[str, str]],
+        model: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ) -> LLMResponse:
         """Call OpenRouter OpenAI-compatible endpoint."""
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key or self.api_key}",
             "Content-Type": "application/json",
         }
         payload = {
-            "model": self.model,
+            "model": model or self.model,
             "messages": messages,
             "temperature": 0.4,
             "max_tokens": 1024,
@@ -223,14 +305,14 @@ class LLMProviderAdapter:
             if resp.status_code == 200:
                 data = resp.json()
                 content = data["choices"][0]["message"]["content"]
-                return LLMResponse(content=content, success=True, provider="openrouter", model=self.model)
+                return LLMResponse(content=content, success=True, provider="openrouter", model=model or self.model)
             else:
                 return LLMResponse(
                     content="",
                     success=False,
                     error_message=f"OpenRouter API error ({resp.status_code}): {resp.text[:300]}",
                     provider="openrouter",
-                    model=self.model,
+                    model=model or self.model,
                 )
 
     def _call_gemini(

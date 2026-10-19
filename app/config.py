@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     llm_provider: str = "gemini"
     llm_model: str = "gemini-3.8-flash"
     llm_timeout_seconds: int = 45
+    llm_fallback_provider: str = "openrouter"
+    llm_fallback_model: str = "openrouter/free"
+    llm_fallback_enabled: bool = True
     groq_api_key: str = ""
     gemini_api_key: str = ""
     openrouter_api_key: str = ""

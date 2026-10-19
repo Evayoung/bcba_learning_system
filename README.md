@@ -14,7 +14,7 @@ An AI-powered study companion for the BCBA exam, built on the **PTB ABA Exam Stu
 | **Practice** | Practice with 13 adapted multiple-choice items based on manual concepts; they are not verbatim manual review questions |
 | **Practice Sets** | Choose 5, 10, or up to 13 verified adapted questions; timed (30/45/60 minutes) or untimed. This is not a full exam simulation or a pass prediction |
 | **Progress** | Review attempt totals, accuracy, and domain summaries |
-| **Settings** | Account credential updates and AI service availability |
+| **Settings** | Account credential updates, AI provider status, and a confirmed learner progress reset |
 | **Auth** | Private account seeded from operator secrets; no shared default login |
 
 ---
@@ -76,8 +76,11 @@ To reset an existing account, run `python -m app.bootstrap_user --reset user@exa
 | `PORT` | No | Server port (default: `5001` local, `$PORT` in cloud) |
 | `LLM_PROVIDER` / `LLM_MODEL` | No | Recommended: `gemini` / `gemini-3.8-flash` |
 | `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` | One required for tutor | Provider credentials configured by the app owner, never in learner settings |
+| `LLM_FALLBACK_PROVIDER` / `LLM_FALLBACK_MODEL` | No | Free OpenRouter fallback used for primary provider timeouts, overloads, or rate limits; defaults to `openrouter` / `openrouter/free` |
+| `LLM_FALLBACK_ENABLED` | No | Set to `false` to disable automatic fallback; the fallback requires `OPENROUTER_API_KEY` and is subject to free-model availability and rate limits |
 
 At least one tutor provider key is required for AI explanations. Practice works without it.
+The Settings page can clear saved attempts/scores, review scheduling, and practice/mock session history after the learner types `RESET`. It preserves the account, manual content, and questions. This control is disabled if more than one learner account exists because progress records are not yet partitioned by user.
 
 ---
 

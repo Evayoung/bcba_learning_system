@@ -76,4 +76,8 @@ def get_public_runtime_settings() -> Dict[str, Any]:
         "llm_provider": runtime["llm_provider"],
         "llm_model": runtime["llm_model"],
         "provider_configured": runtime["provider_configured"],
+        "fallback_provider": settings.llm_fallback_provider,
+        "fallback_model": settings.llm_fallback_model,
+        "fallback_enabled": settings.llm_fallback_enabled,
+        "fallback_configured": bool(settings.openrouter_api_key),
     }
